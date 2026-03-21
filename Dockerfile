@@ -17,6 +17,11 @@ WORKDIR /app
 
 COPY --from=builder /app /app
 
+RUN corepack enable
+
 EXPOSE 9000
 
-CMD ["yarn", "medusa", "start"]
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
+CMD ["/app/start.sh"]
