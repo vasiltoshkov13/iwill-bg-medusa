@@ -21,4 +21,4 @@ RUN corepack enable
 
 EXPOSE 9000
 
-CMD ["sh", "-c", "npx medusa db:migrate && npx medusa start --no-admin"]
+CMD ["sh", "-c", "npx medusa db:migrate && npx medusa start"]
