@@ -1,4 +1,4 @@
-import { loadEnv, defineConfig } from '@medusajs/framework/utils'
+import { loadEnv, defineConfig, Modules } from '@medusajs/framework/utils'
 
 loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 
@@ -18,10 +18,17 @@ module.exports = defineConfig({
   },
   modules: [
     {
-      resolve: "@medusajs/payment-stripe",
+      resolve: "@medusajs/medusa/payment",
       options: {
-        apiKey: process.env.STRIPE_API_KEY,
-        webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+        providers: [
+          {
+            resolve: "@medusajs/medusa/payment-stripe",
+            id: "stripe",
+            options: {
+              apiKey: process.env.STRIPE_API_KEY,
+            },
+          },
+        ],
       },
     },
   ],
