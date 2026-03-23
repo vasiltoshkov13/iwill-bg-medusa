@@ -16,7 +16,7 @@ module.exports = defineConfig({
       cookieSecret: process.env.COOKIE_SECRET || "supersecret",
     }
   },
-  plugins: [
+  modules: [
     {
       resolve: "@medusajs/payment-stripe",
       options: {
