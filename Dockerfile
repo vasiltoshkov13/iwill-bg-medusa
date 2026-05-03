@@ -11,14 +11,17 @@ COPY . .
 
 RUN yarn build
 
+# Install production deps inside the built server output
+RUN cd .medusa/server && npm install --omit=dev
+
 FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-COPY --from=builder /app /app
+COPY --from=builder /app/.medusa/server /app
 
 RUN corepack enable
 
 EXPOSE 9000
 
-CMD ["sh", "-c", "npx medusa db:migrate && npx medusa start"]
+CMD ["sh", "-c", "npx medusa db:migrate && npm run start"]
