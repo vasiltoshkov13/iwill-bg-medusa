@@ -2,7 +2,7 @@
 buildCommand = "npm run build"
 
 [deploy]
-startCommand = "MEDUSA_DISABLE_TELEMETRY=true MEDUSA_WORKER_MODE=shared node ./node_modules/@medusajs/cli/cli.js db:migrate && MEDUSA_DISABLE_TELEMETRY=true MEDUSA_WORKER_MODE=shared exec node ./node_modules/@medusajs/cli/cli.js start"
+startCommand = "sh -c 'export MEDUSA_DISABLE_TELEMETRY=true MEDUSA_WORKER_MODE=shared && node ./node_modules/@medusajs/cli/cli.js db:migrate && exec node ./node_modules/@medusajs/cli/cli.js start'"
 healthcheckPath = "/health"
 healthcheckTimeout = 600
 restartPolicyType = "ON_FAILURE"
