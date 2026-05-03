@@ -12,7 +12,7 @@ COPY . .
 RUN yarn build
 
 # Install production deps inside the built server output
-RUN cd .medusa/server && npm install --omit=dev
+RUN cd .medusa/server && npm install --omit=dev --legacy-peer-deps
 
 FROM node:20-alpine AS runner
 
