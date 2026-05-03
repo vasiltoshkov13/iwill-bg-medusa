@@ -208,6 +208,7 @@ export default async function seedIwillProducts({ container }: ExecArgs) {
       for (const variant of product.variants || []) {
         const qty = BG_STOCK[variant.sku ?? ""] ?? 0;
         if (qty > 0) {
+          if (!variant.sku) continue;
           const items = await inventorySvc.listInventoryItems({ sku: variant.sku });
           if (items[0]) {
             levels.push({ inventory_item_id: items[0].id, location_id: locId, stocked_quantity: qty });
@@ -216,7 +217,7 @@ export default async function seedIwillProducts({ container }: ExecArgs) {
       }
     }
     if (levels.length) {
-      await createInventoryLevelsWorkflow(container).run({ input: { input: levels } });
+      await createInventoryLevelsWorkflow(container).run({ input: { inventory_levels: levels } });
       logger.info(`Set inventory for ${levels.length} variants`);
     }
   }
