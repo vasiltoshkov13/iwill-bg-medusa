@@ -19,7 +19,6 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 COPY --from=builder /app/.medusa/server /app
-COPY --from=builder /app/.medusa/admin /app/.medusa/admin
 
 RUN corepack enable
 
