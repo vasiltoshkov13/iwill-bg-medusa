@@ -21,9 +21,9 @@ const BG_STOCK: Record<string, number> = {
   "N3322-I5-1235U-16GB-128GB":        12,
   "N3022-I5-8260U-16GB-64GB":          3,
   "N1522-BAREBONE":                     1,
-  "N1121-J6412-16GB-64GB":             10,
+  "N1121-J6412-8GB-128GB":             10,
   "N1241-BAREBONE":                     1,
-  "N1241-N100-8GB-64GB":                3,
+  "N1241-N100-8GB-64GB":                2,
   "N3161-I5-1235U-16GB-128GB":          1,
   "N3161-I7-1255U-32GB-64GB":           2,
   "NS-1U6L-ADL-I3-32GB-128GB":          1,
@@ -119,16 +119,16 @@ export default async function seedIwillProducts({ container }: ExecArgs) {
           [mkVariant("N1522-BAREBONE", "Intel N150 Barebone (без RAM/SSD)", 195.25)]),
 
         mkProduct("Nano-N1121", "n1121",
-          "Nano-N1121 — firewall мини PC с Intel J6412, 16GB DDR4, 64GB SSD, 3× 2.5G Ethernet, TPM 2.0. pfSense/OPNsense/Proxmox.",
+          "Nano-N1121 — firewall мини PC с Intel J6412, 8GB DDR4, 128GB SSD, 3× 2.5G Ethernet, TPM 2.0. pfSense/OPNsense/Proxmox.",
           "https://www.iwill.bg/products/N1121/1.jpg", spId,
-          [mkVariant("N1121-J6412-16GB-64GB", "J6412 16GB DDR4 64GB SSD", 255.75)]),
+          [mkVariant("N1121-J6412-8GB-128GB", "J6412 8GB DDR4 128GB SSD", 258.33)]),
 
         // ── N1241 (2 варианта) ───────────────────────────────────
         mkProduct("Nano-N1241", "n1241",
           "Nano-N1241 — мини рутер с Intel N100, 4× 2.5G LAN, TPM 2.0. Идеален за pfSense/OPNsense. Два варианта: Barebone и готов.",
           "https://www.iwill.bg/products/N1241/1.jpg", spId, [
             mkVariant("N1241-BAREBONE",      "Intel N100 Barebone + WiFi AC7260",  196.63),
-            mkVariant("N1241-N100-8GB-64GB", "N100 8GB DDR4 64GB SSD",             225.50),
+            mkVariant("N1241-N100-8GB-64GB", "N100 8GB DDR4 64GB SSD",             283.33),
           ]),
 
         // ── N3161 (2 варианта) ───────────────────────────────────

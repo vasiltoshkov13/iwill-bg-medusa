@@ -351,10 +351,10 @@ export default async function seedDemoData({ container }: ExecArgs) {
         ),
         // ── NETWORK SECURITY ───────────────────────────────────────
         makeProduct(
-          "N1121 — Firewall Mini PC J6412 16GB 64GB",
-          "N1121-J6412-16GB-64GB", 255.75, "Network Security",
-          "Compact firewall mini PC with Intel Celeron J6412, 3x 2.5G LAN, TPM 2.0. 16GB RAM, 64GB SSD.",
-          "n1121-j6412-16gb-64gb"
+          "N1121 — Firewall Mini PC J6412 8GB 128GB",
+          "N1121-J6412-8GB-128GB", 258.33, "Network Security",
+          "Compact firewall mini PC with Intel Celeron J6412, 3x 2.5G LAN, TPM 2.0. 8GB RAM, 128GB SSD.",
+          "n1121-j6412-8gb-128gb"
         ),
         makeProduct(
           "N1241 — Firewall Router Barebone + WiFi",
@@ -364,7 +364,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
         ),
         makeProduct(
           "N1241 — Firewall Router N100 8GB 64GB",
-          "N1241-N100-8GB-64GB", 225.50, "Network Security",
+          "N1241-N100-8GB-64GB", 283.33, "Network Security",
           "Mini router with Intel Alder Lake N100, 4x 2.5G LAN, TPM 2.0. 8GB RAM, 64GB SSD.",
           "n1241-n100-8gb-64gb"
         ),
