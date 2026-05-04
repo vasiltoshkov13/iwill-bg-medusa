@@ -5,7 +5,7 @@ loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 module.exports = defineConfig({
   admin: {
     disable: false,
-    backendUrl: process.env.MEDUSA_BACKEND_URL || "https://api.iwill.bg",
+    backendUrl: process.env.MEDUSA_BACKEND_URL || "https://medusa-backend-production-bd55.up.railway.app",
   },
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
