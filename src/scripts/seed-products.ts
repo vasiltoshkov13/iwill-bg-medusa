@@ -206,10 +206,14 @@ export default async function seedIwillProducts({ container }: ExecArgs) {
     const levels: any[] = [];
     for (const product of result) {
       for (const variant of product.variants || []) {
-        const qty = BG_STOCK[variant.sku ?? ""] ?? 0;
+        const sku = variant.sku;
+        if (!sku) {
+          continue;
+        }
+
+        const qty = BG_STOCK[sku] ?? 0;
         if (qty > 0) {
-          if (!variant.sku) continue;
-          const items = await inventorySvc.listInventoryItems({ sku: variant.sku });
+          const items = await inventorySvc.listInventoryItems({ sku });
           if (items[0]) {
             levels.push({ inventory_item_id: items[0].id, location_id: locId, stocked_quantity: qty });
           }
