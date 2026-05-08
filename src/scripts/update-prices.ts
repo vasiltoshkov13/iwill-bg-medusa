@@ -9,7 +9,8 @@ import {
   Modules,
 } from "@medusajs/framework/utils";
 
-const eur = (n: number) => Math.round(n * 100);
+// Medusa v2 stores price amounts in major currency units, not cents.
+const eur = (n: number) => Number(n.toFixed(2));
 
 type VariantUpdate = {
   sku: string;
