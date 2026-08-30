@@ -15,4 +15,3 @@
 
 export { NisAssessment } from './nis2-assessment';
 export { NisLead } from './nis2-lead';
-export { NisPartnerApplication } from './nis2-partner-application';
