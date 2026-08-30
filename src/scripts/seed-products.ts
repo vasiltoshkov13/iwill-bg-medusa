@@ -13,7 +13,9 @@ import {
   deleteProductsWorkflow,
 } from "@medusajs/medusa/core-flows";
 
-const eur = (n: number) => Math.round(n * 100);
+// Medusa v2 stores price amounts in major currency units, not cents.
+// Example: €574.75 is stored as 574.75.
+const eur = (n: number) => Number(n.toFixed(2));
 const REGION_ID = "reg_01KMBSKKSCARW99Y8H8TEC8YS5";
 const SC_ID = "sc_01KM6ZYJK3F43VAX7TSFRGQAHY"; // Default Sales Channel
 
@@ -206,10 +208,14 @@ export default async function seedIwillProducts({ container }: ExecArgs) {
     const levels: any[] = [];
     for (const product of result) {
       for (const variant of product.variants || []) {
-        const qty = BG_STOCK[variant.sku ?? ""] ?? 0;
+        const sku = variant.sku;
+        if (!sku) {
+          continue;
+        }
+
+        const qty = BG_STOCK[sku] ?? 0;
         if (qty > 0) {
-          if (!variant.sku) continue;
-          const items = await inventorySvc.listInventoryItems({ sku: variant.sku });
+          const items = await inventorySvc.listInventoryItems({ sku });
           if (items[0]) {
             levels.push({ inventory_item_id: items[0].id, location_id: locId, stocked_quantity: qty });
           }

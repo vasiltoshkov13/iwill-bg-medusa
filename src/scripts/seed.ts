@@ -119,6 +119,11 @@ export default async function seedDemoData({ container }: ExecArgs) {
     input: countries.map((country_code) => ({
       country_code,
       provider_id: "tp_system",
+      default_tax_rate: {
+        name: `${country_code.toUpperCase()} VAT`,
+        code: `${country_code.toUpperCase()}-VAT-20`,
+        rate: 20,
+      },
     })),
   });
 
@@ -272,8 +277,9 @@ export default async function seedDemoData({ container }: ExecArgs) {
   const sc = [{ id: defaultSalesChannel[0].id }];
   const sp = shippingProfile.id;
 
-  // Helper: price in EUR cents
-  const eur = (amount: number) => Math.round(amount * 100);
+  // Medusa v2 stores price amounts in major currency units, not cents.
+  // Example: €574.75 is stored as 574.75.
+  const eur = (amount: number) => Number(amount.toFixed(2));
 
   const makeProduct = (
     title: string,
