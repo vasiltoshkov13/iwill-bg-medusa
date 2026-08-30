@@ -19,6 +19,9 @@ module.exports = defineConfig({
   },
   modules: [
     {
+      resolve: "./src/modules/nis2",
+    },
+    {
       resolve: "@medusajs/payment",
       options: {
         providers: [
