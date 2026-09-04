@@ -14,4 +14,7 @@
  */
 
 export { NisAssessment } from './nis2-assessment';
+export { NisConsultation } from './nis2-consultation';
+export { NisIdempotency } from './nis2-idempotency';
 export { NisLead } from './nis2-lead';
+export { NisOutbox } from './nis2-outbox';

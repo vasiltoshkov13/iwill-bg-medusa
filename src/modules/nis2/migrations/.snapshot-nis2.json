@@ -33,6 +33,15 @@
           "nullable": false,
           "mappedType": "text"
         },
+        "answer_digest": {
+          "name": "answer_digest",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
         "organization_type": {
           "name": "organization_type",
           "type": "text",
@@ -196,6 +205,15 @@
           "nullable": true,
           "mappedType": "text"
         },
+        "referrer_origin": {
+          "name": "referrer_origin",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
         "utm_source": {
           "name": "utm_source",
           "type": "text",
@@ -312,6 +330,315 @@
           "nullable": false,
           "mappedType": "text"
         },
+        "lead_id": {
+          "name": "lead_id",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "session_id": {
+          "name": "session_id",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
+        "page_path": {
+          "name": "page_path",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
+        "referrer_origin": {
+          "name": "referrer_origin",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
+        "utm_source": {
+          "name": "utm_source",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
+        "utm_medium": {
+          "name": "utm_medium",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
+        "utm_campaign": {
+          "name": "utm_campaign",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
+        "utm_content": {
+          "name": "utm_content",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
+        "utm_term": {
+          "name": "utm_term",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "default": "now()",
+          "mappedType": "datetime"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "default": "now()",
+          "mappedType": "datetime"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 6,
+          "mappedType": "datetime"
+        }
+      },
+      "name": "nis2_consultation",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "IDX_nis2_consultation_deleted_at",
+          "columnNames": [],
+          "composite": false,
+          "constraint": false,
+          "primary": false,
+          "unique": false,
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_nis2_consultation_deleted_at\" ON \"nis2_consultation\" (\"deleted_at\") WHERE deleted_at IS NULL"
+        },
+        {
+          "keyName": "IDX_nis2_consultation_lead_id",
+          "columnNames": [],
+          "composite": false,
+          "constraint": false,
+          "primary": false,
+          "unique": false,
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_nis2_consultation_lead_id\" ON \"nis2_consultation\" (\"lead_id\") WHERE deleted_at IS NULL"
+        },
+        {
+          "keyName": "nis2_consultation_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {},
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "endpoint_kind": {
+          "name": "endpoint_kind",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "enumItems": [
+            "assessment",
+            "lead",
+            "consultation"
+          ],
+          "mappedType": "enum"
+        },
+        "idempotency_key": {
+          "name": "idempotency_key",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "request_digest": {
+          "name": "request_digest",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "response_status": {
+          "name": "response_status",
+          "type": "integer",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "response_body": {
+          "name": "response_body",
+          "type": "jsonb",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "json"
+        },
+        "domain_id": {
+          "name": "domain_id",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "default": "now()",
+          "mappedType": "datetime"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "default": "now()",
+          "mappedType": "datetime"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 6,
+          "mappedType": "datetime"
+        }
+      },
+      "name": "nis2_idempotency",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "IDX_nis2_idempotency_deleted_at",
+          "columnNames": [],
+          "composite": false,
+          "constraint": false,
+          "primary": false,
+          "unique": false,
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_nis2_idempotency_deleted_at\" ON \"nis2_idempotency\" (\"deleted_at\") WHERE deleted_at IS NULL"
+        },
+        {
+          "keyName": "IDX_nis2_idempotency_endpoint_kind_idempotency_key_unique",
+          "columnNames": [],
+          "composite": false,
+          "constraint": false,
+          "primary": false,
+          "unique": false,
+          "expression": "CREATE UNIQUE INDEX IF NOT EXISTS \"IDX_nis2_idempotency_endpoint_kind_idempotency_key_unique\" ON \"nis2_idempotency\" (\"endpoint_kind\", \"idempotency_key\") WHERE deleted_at IS NULL"
+        },
+        {
+          "keyName": "IDX_nis2_idempotency_domain_id",
+          "columnNames": [],
+          "composite": false,
+          "constraint": false,
+          "primary": false,
+          "unique": false,
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_nis2_idempotency_domain_id\" ON \"nis2_idempotency\" (\"domain_id\") WHERE deleted_at IS NULL"
+        },
+        {
+          "keyName": "nis2_idempotency_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {},
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
         "assessment_id": {
           "name": "assessment_id",
           "type": "text",
@@ -375,6 +702,35 @@
           "nullable": true,
           "mappedType": "text"
         },
+        "privacy_consent": {
+          "name": "privacy_consent",
+          "type": "boolean",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "false",
+          "mappedType": "boolean"
+        },
+        "privacy_notice_version": {
+          "name": "privacy_notice_version",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
+        "consented_at": {
+          "name": "consented_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 6,
+          "mappedType": "datetime"
+        },
         "wants_consultation": {
           "name": "wants_consultation",
           "type": "boolean",
@@ -394,6 +750,30 @@
           "nullable": false,
           "default": "false",
           "mappedType": "boolean"
+        },
+        "marketing_notice_version": {
+          "name": "marketing_notice_version",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
+        "qualification": {
+          "name": "qualification",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "'review_required'",
+          "enumItems": [
+            "qualified",
+            "review_required",
+            "unqualified"
+          ],
+          "mappedType": "enum"
         },
         "lead_status": {
           "name": "lead_status",
@@ -431,6 +811,15 @@
           "nullable": true,
           "mappedType": "text"
         },
+        "answer_digest": {
+          "name": "answer_digest",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
         "scope_result": {
           "name": "scope_result",
           "type": "text",
@@ -449,6 +838,33 @@
           "nullable": true,
           "mappedType": "text"
         },
+        "confidence": {
+          "name": "confidence",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
+        "enterprise_size": {
+          "name": "enterprise_size",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
+        "annex_class": {
+          "name": "annex_class",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
         "reason_codes": {
           "name": "reason_codes",
           "type": "text[]",
@@ -457,6 +873,25 @@
           "primary": false,
           "nullable": true,
           "mappedType": "array"
+        },
+        "result_snapshot": {
+          "name": "result_snapshot",
+          "type": "jsonb",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "json"
+        },
+        "requires_manual_review": {
+          "name": "requires_manual_review",
+          "type": "boolean",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "false",
+          "mappedType": "boolean"
         },
         "infrastructure_needs": {
           "name": "infrastructure_needs",
@@ -487,6 +922,15 @@
         },
         "referrer": {
           "name": "referrer",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
+        "referrer_origin": {
+          "name": "referrer_origin",
           "type": "text",
           "unsigned": false,
           "autoincrement": false,
@@ -586,6 +1030,214 @@
         },
         {
           "keyName": "nis2_lead_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {},
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "request_id": {
+          "name": "request_id",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "domain_kind": {
+          "name": "domain_kind",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "enumItems": [
+            "lead",
+            "consultation"
+          ],
+          "mappedType": "enum"
+        },
+        "domain_id": {
+          "name": "domain_id",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "intent_type": {
+          "name": "intent_type",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "enumItems": [
+            "ops_lead",
+            "visitor_summary",
+            "internal_lead",
+            "ops_consultation",
+            "internal_consultation"
+          ],
+          "mappedType": "enum"
+        },
+        "state": {
+          "name": "state",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "'pending'",
+          "enumItems": [
+            "pending",
+            "processing",
+            "delivered",
+            "dead_letter"
+          ],
+          "mappedType": "enum"
+        },
+        "attempt_count": {
+          "name": "attempt_count",
+          "type": "integer",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "0",
+          "mappedType": "integer"
+        },
+        "next_attempt_at": {
+          "name": "next_attempt_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "last_error_class": {
+          "name": "last_error_class",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "enumItems": [
+            "timeout",
+            "rate_limited",
+            "authentication",
+            "provider_4xx",
+            "provider_5xx",
+            "network",
+            "unknown"
+          ],
+          "mappedType": "enum"
+        },
+        "payload": {
+          "name": "payload",
+          "type": "jsonb",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "json"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "default": "now()",
+          "mappedType": "datetime"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "default": "now()",
+          "mappedType": "datetime"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 6,
+          "mappedType": "datetime"
+        }
+      },
+      "name": "nis2_outbox",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "IDX_nis2_outbox_deleted_at",
+          "columnNames": [],
+          "composite": false,
+          "constraint": false,
+          "primary": false,
+          "unique": false,
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_nis2_outbox_deleted_at\" ON \"nis2_outbox\" (\"deleted_at\") WHERE deleted_at IS NULL"
+        },
+        {
+          "keyName": "IDX_nis2_outbox_domain_id_intent_type_unique",
+          "columnNames": [],
+          "composite": false,
+          "constraint": false,
+          "primary": false,
+          "unique": false,
+          "expression": "CREATE UNIQUE INDEX IF NOT EXISTS \"IDX_nis2_outbox_domain_id_intent_type_unique\" ON \"nis2_outbox\" (\"domain_id\", \"intent_type\") WHERE deleted_at IS NULL"
+        },
+        {
+          "keyName": "IDX_nis2_outbox_state_next_attempt_at",
+          "columnNames": [],
+          "composite": false,
+          "constraint": false,
+          "primary": false,
+          "unique": false,
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_nis2_outbox_state_next_attempt_at\" ON \"nis2_outbox\" (\"state\", \"next_attempt_at\") WHERE deleted_at IS NULL"
+        },
+        {
+          "keyName": "IDX_nis2_outbox_request_id",
+          "columnNames": [],
+          "composite": false,
+          "constraint": false,
+          "primary": false,
+          "unique": false,
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_nis2_outbox_request_id\" ON \"nis2_outbox\" (\"request_id\") WHERE deleted_at IS NULL"
+        },
+        {
+          "keyName": "nis2_outbox_pkey",
           "columnNames": [
             "id"
           ],

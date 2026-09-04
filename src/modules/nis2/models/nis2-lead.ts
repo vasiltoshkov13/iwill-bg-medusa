@@ -17,9 +17,15 @@ export const NisLead = model.define(
     phone: model.text().nullable(),
     preferred_contact: model.text().nullable(),
 
+    privacy_consent: model.boolean().default(false),
+    privacy_notice_version: model.text().nullable(),
+    consented_at: model.dateTime().nullable(),
+
     wants_consultation: model.boolean().default(false),
     /** Separate from the mandatory data-processing consent, and optional. */
     marketing_consent: model.boolean().default(false),
+    marketing_notice_version: model.text().nullable(),
+    qualification: model.enum(['qualified', 'review_required', 'unqualified']).default('review_required'),
 
     lead_status: model.enum([
       'NEW',
@@ -33,15 +39,22 @@ export const NisLead = model.define(
 
     // Result snapshot, so a lead stays readable without joining the assessment.
     rules_version: model.text().nullable(),
+    answer_digest: model.text().nullable(),
     scope_result: model.text().nullable(),
     entity_category: model.text().nullable(),
+    confidence: model.text().nullable(),
+    enterprise_size: model.text().nullable(),
+    annex_class: model.text().nullable(),
     reason_codes: model.array().nullable(),
+    result_snapshot: model.json().nullable(),
+    requires_manual_review: model.boolean().default(false),
     infrastructure_needs: model.array().nullable(),
 
     // Attribution
     session_id: model.text().nullable(),
     page_path: model.text().nullable(),
     referrer: model.text().nullable(),
+    referrer_origin: model.text().nullable(),
     utm_source: model.text().nullable(),
     utm_medium: model.text().nullable(),
     utm_campaign: model.text().nullable(),

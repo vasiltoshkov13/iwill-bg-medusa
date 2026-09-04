@@ -2,6 +2,8 @@ import { MedusaRequest, MedusaResponse } from '@medusajs/framework/http';
 
 import { NIS2_MODULE } from '../../../../modules/nis2';
 import type Nis2ModuleService from '../../../../modules/nis2/service';
+import { ContractError } from '../contract';
+import { handleV1Request } from '../handler';
 import { ValidationError, requiredText } from '../validation';
 
 /**
@@ -11,6 +13,7 @@ import { ValidationError, requiredText } from '../validation';
  * does not appear twice in the pipeline.
  */
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
+  if (await handleV1Request('consultation', req, res)) return;
   const body = (req.body ?? {}) as Record<string, unknown>;
 
   try {
@@ -26,7 +29,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     await service.updateNisLeads({ id: leadId, wants_consultation: true });
     res.status(200).json({ consultation: { id: leadId } });
   } catch (error) {
-    if (error instanceof ValidationError) {
+    if (error instanceof ValidationError || error instanceof ContractError) {
       res.status(400).json({ message: error.message, field: error.field });
       return;
     }

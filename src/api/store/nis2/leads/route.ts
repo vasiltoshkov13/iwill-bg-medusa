@@ -3,13 +3,15 @@ import { MedusaRequest, MedusaResponse } from '@medusajs/framework/http';
 import { NIS2_MODULE } from '../../../../modules/nis2';
 import type Nis2ModuleService from '../../../../modules/nis2/service';
 import { evaluateNis2 } from '../../../../modules/nis2/rules/evaluate';
+import { ContractError } from '../contract';
+import { handleV1Request } from '../handler';
 import {
   ValidationError,
   booleanFlag,
   email,
-  parseAnswers,
-  parseAttribution,
-  parseInfrastructureNeeds,
+  parseLegacyAnswers,
+  parseLegacyAttribution,
+  parseLegacyInfrastructureNeeds,
   optionalText,
   requiredText,
 } from '../validation';
@@ -23,13 +25,14 @@ const PREFERRED_CONTACT = ['EMAIL', 'PHONE', 'WHATSAPP'];
  * scoring a salesperson sees cannot be set by the browser that submitted it.
  */
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
+  if (await handleV1Request('lead', req, res)) return;
   const body = (req.body ?? {}) as Record<string, unknown>;
 
   try {
-    const answers = parseAnswers(body.answers);
+    const answers = parseLegacyAnswers(body.answers);
     const result = evaluateNis2(answers);
-    const infrastructureNeeds = parseInfrastructureNeeds(body.infrastructureNeeds);
-    const attribution = parseAttribution(body.attribution);
+    const infrastructureNeeds = parseLegacyInfrastructureNeeds(body.infrastructureNeeds);
+    const attribution = parseLegacyAttribution(body.attribution);
 
     const preferredContact = optionalText('preferredContact', body.preferredContact, 20);
     if (preferredContact && !PREFERRED_CONTACT.includes(preferredContact)) {
@@ -58,7 +61,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     res.status(201).json({ lead: { id: lead.id } });
   } catch (error) {
-    if (error instanceof ValidationError) {
+    if (error instanceof ValidationError || error instanceof ContractError) {
       res.status(400).json({ message: error.message, field: error.field });
       return;
     }

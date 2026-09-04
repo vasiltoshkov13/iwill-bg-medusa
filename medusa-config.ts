@@ -1,6 +1,14 @@
 import { loadEnv, defineConfig, Modules } from '@medusajs/framework/utils'
+import {
+  loadCampaignAllowlist,
+  loadMarketingNoticeVersion,
+} from './src/api/store/nis2/validation'
 
 loadEnv(process.env.NODE_ENV || 'development', process.cwd())
+
+// Validate optional campaign taxonomy before Medusa starts accepting traffic.
+loadCampaignAllowlist()
+loadMarketingNoticeVersion()
 
 const isProduction = process.env.NODE_ENV === 'production'
 

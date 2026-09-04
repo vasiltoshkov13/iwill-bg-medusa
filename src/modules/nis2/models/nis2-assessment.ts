@@ -17,6 +17,7 @@ export const NisAssessment = model.define(
     /** Browser session that produced the assessment; not a user identifier. */
     session_id: model.text().nullable(),
     rules_version: model.text(),
+    answer_digest: model.text().nullable(),
 
     // Answers
     organization_type: model.text(),
@@ -43,6 +44,7 @@ export const NisAssessment = model.define(
     // Attribution
     page_path: model.text().nullable(),
     referrer: model.text().nullable(),
+    referrer_origin: model.text().nullable(),
     utm_source: model.text().nullable(),
     utm_medium: model.text().nullable(),
     utm_campaign: model.text().nullable(),
