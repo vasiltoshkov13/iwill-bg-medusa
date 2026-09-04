@@ -27,3 +27,5 @@ medusaIntegrationTestRunner({
 ```
 
 Learn more in [this documentation](https://docs.medusajs.com/learn/debugging-and-testing/testing-tools/integration-tests).
+
+Run all HTTP suites with `npm run test:integration:http`. The repository runner performs a short PostgreSQL preflight so a missing `DB_USERNAME` fails fast or selects a local `CREATEDB` role instead of timing out inside Medusa's hooks. Set `DB_USERNAME` and `DB_PASSWORD` explicitly for CI or non-local PostgreSQL.

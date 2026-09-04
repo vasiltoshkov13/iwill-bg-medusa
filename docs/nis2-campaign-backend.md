@@ -52,14 +52,15 @@ npm run test:unit -- --runTestsByPath \
   src/modules/nis2/__tests__/durability.unit.spec.ts \
   src/modules/nis2/__tests__/service.unit.spec.ts
 
-DB_USERNAME="$USER" STRIPE_API_KEY=dummy \
-  npm run test:integration:http -- --runTestsByPath integration-tests/http/nis2.spec.ts
+npm run test:integration:http
 
 MIGRATION_TEST_DATABASE_URL='postgres://USER@HOST:PORT/ISOLATED_DB' \
   ./node_modules/.bin/ts-node scripts/verify-nis2-migration.ts
 
 ./node_modules/.bin/tsc --noEmit
 ```
+
+The HTTP integration runner requires a local or explicitly configured PostgreSQL role with `CREATEDB`. When `DB_USERNAME` is unset, its preflight tries `PGUSER`, the operating-system username, and then Medusa's `postgres` default, selecting only a role that can connect and create disposable databases. Explicit `DB_USERNAME`/`DB_PASSWORD` values always win. The runner supplies a non-secret Stripe placeholder only when the test process has no configured key; it never writes that placeholder to runtime configuration.
 
 The migration verifier requires an isolated disposable PostgreSQL database. It exercises `up`, validates constraints and foreign-key behavior, exercises `down`, and reapplies `up` to prove recovery. Never point it at a shared, staging, or production database.
 
