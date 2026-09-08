@@ -18,7 +18,7 @@ The default fixed window is 600 seconds. Optional positive-integer overrides are
 
 Set `NIS2_MARKETING_NOTICE_VERSION` to the legal-approved marketing notice identifier before accepting any lead with `marketingConsent=true`. The backend requires an exact match and fails closed when no approved version is configured. Leave the variable unset if marketing consent is not yet enabled; `marketingConsent=false` still requires `marketingNoticeVersion=null`.
 
-Lead privacy consent is bound immutably to `nis2-privacy-2026-09-08-5090901008de`, the canonical notice identifier shipped by storefront candidate `c8998da15db913dcfae7742bb5c8af7e8a8bc3aa`. `privacyConsent` must be `true` and `privacyNoticeVersion` must match that literal. Missing, former (`nis2-privacy-2026-09-04`), and unknown versions return HTTP 400 `VALIDATION_FAILED` on `privacyNoticeVersion` before any lead, idempotency, or outbox write. The exact Medusa-bound storefront fixture is `integration-tests/fixtures/storefront-c8998da15db913dcfae7742bb5c8af7e8a8bc3aa-lead.json`.
+Lead privacy acknowledgement is bound immutably to `nis2-privacy-2026-09-08-93ba2f3d8256`, the canonical notice identifier shipped by storefront candidate `34d404509a5cbedda22f42ea908b2f7cb97873cb`. The legacy compatibility field `privacyConsent` must be `true` and `privacyNoticeVersion` must match that literal byte-for-byte. Missing, former (`nis2-privacy-2026-09-04`), superseded (`nis2-privacy-2026-09-08-5090901008de`), changed (including whitespace-modified), and unknown versions return HTTP 400 `VALIDATION_FAILED` on `privacyNoticeVersion` before any lead, idempotency, or outbox write. The exact Medusa-bound storefront fixture is `integration-tests/fixtures/storefront-34d404509a5cbedda22f42ea908b2f7cb97873cb-lead.json`.
 
 Example lead request (with the standard v1 headers and a fresh canonical UUID v4 idempotency key):
 
@@ -32,7 +32,7 @@ Example lead request (with the standard v1 headers and a fresh canonical UUID v4
   "phone": null,
   "preferredContact": "EMAIL",
   "privacyConsent": true,
-  "privacyNoticeVersion": "nis2-privacy-2026-09-08-5090901008de",
+  "privacyNoticeVersion": "nis2-privacy-2026-09-08-93ba2f3d8256",
   "marketingConsent": false,
   "marketingNoticeVersion": null,
   "wantsConsultation": false,

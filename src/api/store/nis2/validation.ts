@@ -39,7 +39,7 @@ const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f
 const SUBSECTOR_PATTERN = /^[A-Z0-9_]+$/;
 const PHONE_PATTERN = /^[+\d][\d\s()./-]{5,}$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const PRIVACY_NOTICE_VERSION = 'nis2-privacy-2026-09-08-5090901008de';
+const PRIVACY_NOTICE_VERSION = 'nis2-privacy-2026-09-08-93ba2f3d8256';
 const NOTICE_VERSION_PATTERN = /^[a-z0-9][a-z0-9._-]{0,63}$/;
 
 const ANSWER_FIELDS = new Set([
@@ -312,8 +312,10 @@ export function parseLeadBody(
   if (raw.privacyConsent !== true) {
     throw new ContractError('CONSENT_REQUIRED', 400, false);
   }
-  const privacyNoticeVersion = requiredString('privacyNoticeVersion', raw.privacyNoticeVersion, 64);
-  if (privacyNoticeVersion !== PRIVACY_NOTICE_VERSION) validation('privacyNoticeVersion');
+  if (typeof raw.privacyNoticeVersion !== 'string' || raw.privacyNoticeVersion !== PRIVACY_NOTICE_VERSION) {
+    validation('privacyNoticeVersion');
+  }
+  const privacyNoticeVersion = raw.privacyNoticeVersion;
   const marketingConsent = booleanValue('marketingConsent', raw.marketingConsent);
   const marketingNoticeVersion = nullableString('marketingNoticeVersion', raw.marketingNoticeVersion, 64);
   if ((marketingConsent && marketingNoticeVersion === null) || (!marketingConsent && marketingNoticeVersion !== null)) {

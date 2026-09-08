@@ -175,7 +175,7 @@ describe('NIS2 v1 route durability adapter', () => {
       phone: null,
       preferredContact: 'EMAIL',
       privacyConsent: true,
-      privacyNoticeVersion: 'nis2-privacy-2026-09-08-5090901008de',
+      privacyNoticeVersion: 'nis2-privacy-2026-09-08-93ba2f3d8256',
       marketingConsent: false,
       marketingNoticeVersion: null,
       wantsConsultation: false,

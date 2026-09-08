@@ -4,7 +4,7 @@ import { medusaIntegrationTestRunner } from '@medusajs/test-utils';
 import { Modules } from '@medusajs/framework/utils';
 import { NIS2_MODULE } from '../../src/modules/nis2';
 import type Nis2ModuleService from '../../src/modules/nis2/service';
-import storefrontLeadBody from '../fixtures/storefront-c8998da15db913dcfae7742bb5c8af7e8a8bc3aa-lead.json';
+import storefrontLeadBody from '../fixtures/storefront-34d404509a5cbedda22f42ea908b2f7cb97873cb-lead.json';
 
 jest.setTimeout(120 * 1000);
 
@@ -181,7 +181,7 @@ medusaIntegrationTestRunner({
         expect((await service().listNisLeads({})).length).toBe(before);
       });
 
-      it('accepts the exact storefront c8998da lead payload as a durable write', async () => {
+      it('accepts the exact storefront 34d4045 lead payload as a durable write', async () => {
         const key = '90b3f62f-8c20-4b02-9004-0d8539f76dfa';
         const beforeLeads = (await service().listNisLeads({})).length;
         const beforeOutbox = (await service().listNisOutboxes({})).length;
@@ -195,7 +195,7 @@ medusaIntegrationTestRunner({
         const leadId = response.data.lead.id;
         const persisted = await service().listNisLeads({ id: leadId });
         expect(persisted).toHaveLength(1);
-        expect(persisted[0].privacy_notice_version).toBe('nis2-privacy-2026-09-08-5090901008de');
+        expect(persisted[0].privacy_notice_version).toBe('nis2-privacy-2026-09-08-93ba2f3d8256');
         expect((await service().listNisLeads({})).length).toBe(beforeLeads + 1);
         expect((await service().listNisOutboxes({})).length).toBe(beforeOutbox + 3);
         expect(await service().listNisIdempotencies({ endpoint_kind: 'lead', idempotency_key: key })).toHaveLength(1);
@@ -203,6 +203,9 @@ medusaIntegrationTestRunner({
 
       it.each([
         ['the former approved version', 'nis2-privacy-2026-09-04', '0c5c2c4d-21e8-4a86-bff0-b9c195ccac09'],
+        ['the superseded storefront version', 'nis2-privacy-2026-09-08-5090901008de', 'a2b1c914-874f-43c8-9451-c946f63c3815'],
+        ['a changed canonical version', 'nis2-privacy-2026-09-08-93ba2f3d8256-changed', 'd6f6d337-ea7e-422f-9447-22c7b695180b'],
+        ['a whitespace-modified canonical version', ' nis2-privacy-2026-09-08-93ba2f3d8256 ', '23ac6425-b44f-40c3-a567-11f9de14a783'],
         ['an unknown version', 'nis2-privacy-unknown', 'eb855cb0-3149-4ea6-b502-a1a4673986d0'],
         ['a missing version', undefined, '113d9030-a65e-444d-87d2-1f1e420248f4'],
       ])('rejects %s before a durable write', async (_case, privacyNoticeVersion, key) => {
