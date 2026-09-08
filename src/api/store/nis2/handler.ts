@@ -19,6 +19,7 @@ import {
   parseLeadBody,
   qualificationFor,
 } from './validation';
+import { consumeNis2RateLimit } from './rate-limit';
 
 interface SafeLogger {
   info(message: string): void;
@@ -29,9 +30,6 @@ export async function handleV1Request(
   req: MedusaRequest,
   res: MedusaResponse,
 ): Promise<boolean> {
-  const version = req.headers['x-nis2-contract-version'];
-  if (version === undefined) return false;
-
   const startedAt = Date.now();
   const requestId = randomUUID();
   res.setHeader('X-NIS2-Contract-Version', CONTRACT_VERSION);
@@ -42,6 +40,15 @@ export async function handleV1Request(
 
   try {
     const common = parseV1Request(req.headers, req.body);
+    const rateLimit = await consumeNis2RateLimit(req, endpoint);
+    if (!rateLimit.allowed) {
+      res.setHeader('Retry-After', String(rateLimit.retryAfter));
+      throw new ContractError(
+        rateLimit.unavailable ? 'PERSISTENCE_UNAVAILABLE' : 'RATE_LIMITED',
+        rateLimit.unavailable ? 503 : 429,
+        true,
+      );
+    }
     const secret = idempotencySecret();
     const allowlist = loadCampaignAllowlist();
     const service: Nis2ModuleService = req.scope.resolve(NIS2_MODULE);

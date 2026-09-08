@@ -12,6 +12,10 @@ Versioned callers send `Content-Type: application/json`, `X-NIS2-Contract-Versio
 
 Set `NIS2_IDEMPOTENCY_SECRET` to a deployment-specific random value of at least 32 characters. Do not reuse JWT, cookie, database, or provider credentials. Requests fail closed with `503 PERSISTENCE_UNAVAILABLE` if the secret is absent or too short.
 
+The public Medusa boundary also requires a shared Redis REST limiter. Configure `NIS2_RATE_LIMIT_REST_URL`, `NIS2_RATE_LIMIT_REST_TOKEN`, and a deployment-specific `NIS2_RATE_LIMIT_HMAC_SECRET` of at least 32 characters. The URL must use HTTPS in production. `KV_REST_API_URL` / `KV_REST_API_TOKEN` and `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` are accepted provider aliases. The backend fails closed with `503 PERSISTENCE_UNAVAILABLE` if configuration, transport, or the shared service is unavailable; it never falls back to process-local counters.
+
+The default fixed window is 600 seconds. Optional positive-integer overrides are `NIS2_RATE_LIMIT_WINDOW_SECONDS`, `NIS2_RATE_LIMIT_TIMEOUT_MS`, and per-endpoint `NIS2_RATE_LIMIT_{ASSESSMENT|LEAD|CONSULTATION}_{GLOBAL|NETWORK|KEY}_MAX`. Counters cover the backend fleet, the direct socket peer network, and the logical submission key. Forwarding headers are ignored because an origin caller can forge them. Only truncated HMAC bucket identifiers leave the process; raw addresses and idempotency keys are not sent to the limiter or written to application logs.
+
 Set `NIS2_MARKETING_NOTICE_VERSION` to the legal-approved marketing notice identifier before accepting any lead with `marketingConsent=true`. The backend requires an exact match and fails closed when no approved version is configured. Leave the variable unset if marketing consent is not yet enabled; `marketingConsent=false` still requires `marketingNoticeVersion=null`.
 
 `NIS2_CAMPAIGN_ALLOWLIST` is optional JSON with this exact shape:
@@ -28,7 +32,7 @@ Set `NIS2_MARKETING_NOTICE_VERSION` to the legal-approved marketing notice ident
 
 Every member must be a lower-case campaign token. Unknown keys, malformed JSON, non-array values, duplicates, or invalid tokens abort Medusa configuration loading. An omitted variable produces empty lists, so no UTM dimension is persisted. Keep the configured taxonomy aligned with the storefront contract.
 
-The Store API retains the pre-existing unversioned request path for the migration window. That compatibility path retains legacy consent semantics and must not be treated as a v1-compliant public path; route access and the announced cutoff must be controlled operationally. Its attribution parser still reduces referrers to HTTP(S) origins and omits invalid or non-allowlisted campaign data. An explicit unsupported contract version returns HTTP 426. The public v1 path must not be activated until the coordinated storefront, shared abuse-control, outbox-processing, monitoring, and Security/QA release gates pass.
+The compatibility window is closed. An absent or unsupported contract version returns HTTP 426 before rate-limit consumption or any durable write. CORS is browser policy only and is not treated as authorization or an abuse-control boundary. The public v1 path must not be activated until the coordinated storefront, shared abuse-control, outbox-processing, monitoring, and Security/QA release gates pass.
 
 ## Durability and privacy behavior
 
@@ -66,7 +70,7 @@ The migration verifier requires an isolated disposable PostgreSQL database. It e
 
 ## Rollout
 
-1. Apply the expand migration while legacy traffic remains supported.
+1. Apply the expand migration before routing versioned traffic to this candidate.
 2. Verify schema, route health, structured logs, idempotent retries, transaction rollback, and production-like reconciliation counts.
 3. Complete the NIS2-05 abuse-control and outbox worker gate with isolated records.
 4. Atomically switch the storefront to versioned headers and its v1-only outbox path; a v1 request must never also use a direct notification path.
@@ -78,7 +82,7 @@ The migration verifier requires an isolated disposable PostgreSQL database. It e
 Runtime rollback keeps the expanded schema:
 
 1. Stop paid traffic and new v1 submissions. Return an honest retryable 503 rather than acknowledging an uncommitted lead.
-2. Revert the storefront experience or v1 adapter while preserving legacy compatibility.
+2. Revert the storefront experience or disable the public route; do not reopen the unversioned compatibility path.
 3. Repair or roll forward the backend.
 4. Drain and reconcile pending/dead-letter intents and compare domain, idempotency, and outbox counts.
 

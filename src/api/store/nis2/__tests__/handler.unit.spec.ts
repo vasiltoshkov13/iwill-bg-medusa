@@ -2,6 +2,7 @@ import { CONTRACT_VERSION } from '../contract';
 import { handleV1Request } from '../handler';
 
 const KEY = '5d9cac03-85c8-44a9-a218-b427a42de85e';
+const originalFetch = global.fetch;
 const answers = {
   organizationType: 'PRIVATE_ENTERPRISE',
   sector: 'FOOD',
@@ -40,10 +41,21 @@ function requestDouble(body: Record<string, unknown>, service: Record<string, je
 describe('NIS2 v1 route durability adapter', () => {
   beforeEach(() => {
     process.env.NIS2_IDEMPOTENCY_SECRET = 'unit-test-secret-with-at-least-32-characters';
+    process.env.NIS2_RATE_LIMIT_REST_URL = 'https://rate-limit.example.invalid';
+    process.env.NIS2_RATE_LIMIT_REST_TOKEN = 'synthetic-unit-token';
+    process.env.NIS2_RATE_LIMIT_HMAC_SECRET = 'unit-limiter-secret-with-at-least-32-characters';
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ result: [1, 1, 1] }),
+    });
   });
 
   afterEach(() => {
     delete process.env.NIS2_IDEMPOTENCY_SECRET;
+    delete process.env.NIS2_RATE_LIMIT_REST_URL;
+    delete process.env.NIS2_RATE_LIMIT_REST_TOKEN;
+    delete process.env.NIS2_RATE_LIMIT_HMAC_SECRET;
+    global.fetch = originalFetch;
   });
 
   it('returns 201 only after the assessment service reports a committed row', async () => {
@@ -242,13 +254,15 @@ describe('NIS2 v1 route durability adapter', () => {
     expect(res.json).toHaveBeenCalledWith(committed);
   });
 
-  it('leaves an unversioned request to the compatibility handler', async () => {
+  it('rejects an unversioned request instead of invoking the compatibility handler', async () => {
     const service = { createAssessmentSubmission: jest.fn() };
     const req = requestDouble({ answers, infrastructureNeeds: [] }, service);
     delete req.headers['x-nis2-contract-version'];
     const res = responseDouble();
 
-    await expect(handleV1Request('assessment', req, res)).resolves.toBe(false);
-    expect(res.status).not.toHaveBeenCalled();
+    await expect(handleV1Request('assessment', req, res)).resolves.toBe(true);
+    expect(res.status).toHaveBeenCalledWith(426);
+    expect(res.json.mock.calls[0][0].error.code).toBe('UNSUPPORTED_CONTRACT_VERSION');
+    expect(service.createAssessmentSubmission).not.toHaveBeenCalled();
   });
 });

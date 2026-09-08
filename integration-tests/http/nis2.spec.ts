@@ -1,3 +1,5 @@
+import { createServer, type IncomingMessage, type Server } from 'node:http';
+
 import { medusaIntegrationTestRunner } from '@medusajs/test-utils';
 import { Modules } from '@medusajs/framework/utils';
 import { NIS2_MODULE } from '../../src/modules/nis2';
@@ -7,7 +9,12 @@ jest.setTimeout(120 * 1000);
 
 const VERSION = '1.0.0';
 const SECRET = 'integration-test-secret-with-at-least-32-characters';
+const LIMITER_SECRET = 'integration-limiter-secret-with-at-least-32-characters';
 let publishableKey = '';
+let limiterServer: Server;
+let limiterUrl = '';
+let limiterMode: 'normal' | 'error' = 'normal';
+const limiterCounts = new Map<string, number>();
 const headers = (key?: string) => ({
   'Content-Type': 'application/json',
   'X-NIS2-Contract-Version': VERSION,
@@ -49,6 +56,18 @@ const leadBody = {
   attribution: {},
 };
 
+function readRequestBody(request: IncomingMessage): Promise<string> {
+  return new Promise((resolve, reject) => {
+    let body = '';
+    request.setEncoding('utf8');
+    request.on('data', (chunk) => {
+      body += chunk;
+    });
+    request.on('end', () => resolve(body));
+    request.on('error', reject);
+  });
+}
+
 medusaIntegrationTestRunner({
   inApp: true,
   env: {
@@ -58,7 +77,58 @@ medusaIntegrationTestRunner({
   testSuite: ({ api, getContainer, dbConnection }) => {
     const service = () => getContainer().resolve(NIS2_MODULE) as Nis2ModuleService;
 
+    beforeAll(async () => {
+      limiterServer = createServer(async (request, response) => {
+        if (limiterMode === 'error') {
+          response.writeHead(503, { 'Content-Type': 'application/json' });
+          response.end(JSON.stringify({ error: 'synthetic limiter outage' }));
+          return;
+        }
+        try {
+          const command = JSON.parse(await readRequestBody(request)) as unknown[];
+          const keyCount = Number(command[2]);
+          const keys = command.slice(3, 3 + keyCount).map(String);
+          const counts = keys.map((key) => {
+            const count = (limiterCounts.get(key) ?? 0) + 1;
+            limiterCounts.set(key, count);
+            return count;
+          });
+          response.writeHead(200, { 'Content-Type': 'application/json' });
+          response.end(JSON.stringify({ result: counts }));
+        } catch {
+          response.writeHead(400, { 'Content-Type': 'application/json' });
+          response.end(JSON.stringify({ error: 'invalid test command' }));
+        }
+      });
+      await new Promise<void>((resolve) => limiterServer.listen(0, '127.0.0.1', resolve));
+      const address = limiterServer.address();
+      if (!address || typeof address === 'string') throw new Error('Limiter test server did not bind.');
+      limiterUrl = `http://127.0.0.1:${address.port}`;
+      process.env.NIS2_RATE_LIMIT_REST_URL = limiterUrl;
+      process.env.NIS2_RATE_LIMIT_REST_TOKEN = 'synthetic-integration-token';
+      process.env.NIS2_RATE_LIMIT_HMAC_SECRET = LIMITER_SECRET;
+      process.env.NIS2_RATE_LIMIT_ALLOW_LOOPBACK = 'true';
+    });
+
+    afterAll(async () => {
+      await new Promise<void>((resolve, reject) => {
+        limiterServer.close((error) => error ? reject(error) : resolve());
+      });
+    });
+
     beforeEach(async () => {
+      limiterCounts.clear();
+      limiterMode = 'normal';
+      process.env.NIS2_RATE_LIMIT_REST_URL = limiterUrl;
+      process.env.NIS2_RATE_LIMIT_ASSESSMENT_NETWORK_MAX = '1000';
+      process.env.NIS2_RATE_LIMIT_ASSESSMENT_GLOBAL_MAX = '1000';
+      process.env.NIS2_RATE_LIMIT_ASSESSMENT_KEY_MAX = '1000';
+      process.env.NIS2_RATE_LIMIT_LEAD_NETWORK_MAX = '1000';
+      process.env.NIS2_RATE_LIMIT_LEAD_GLOBAL_MAX = '1000';
+      process.env.NIS2_RATE_LIMIT_LEAD_KEY_MAX = '1000';
+      process.env.NIS2_RATE_LIMIT_CONSULTATION_NETWORK_MAX = '1000';
+      process.env.NIS2_RATE_LIMIT_CONSULTATION_GLOBAL_MAX = '1000';
+      process.env.NIS2_RATE_LIMIT_CONSULTATION_KEY_MAX = '1000';
       const apiKeyService = getContainer().resolve(Modules.API_KEY) as any;
       const created = await apiKeyService.createApiKeys({
         title: 'NIS2 integration',
@@ -69,6 +139,173 @@ medusaIntegrationTestRunner({
     });
 
     describe('NIS2-CAMPAIGN-CONTRACT 1.0.0 durable HTTP API', () => {
+      it('rejects an absent contract version before any durable write', async () => {
+        const before = (await service().listNisAssessments({})).length;
+        const response = await api.post('/store/nis2/assessments', assessmentBody, {
+          headers: {
+            'Content-Type': 'application/json',
+            'x-publishable-api-key': publishableKey,
+            'Idempotency-Key': '4f2e379c-d387-4029-bf62-da11b01db1d6',
+          },
+          ...acceptAnyStatus,
+        });
+
+        expect(response.status).toBe(426);
+        expect(response.headers['x-nis2-contract-version']).toBe(VERSION);
+        expect(response.data.error).toEqual(expect.objectContaining({
+          code: 'UNSUPPORTED_CONTRACT_VERSION',
+          retryable: false,
+        }));
+        expect((await service().listNisAssessments({})).length).toBe(before);
+      });
+
+      it('rejects a mismatched contract version before any durable write', async () => {
+        const before = (await service().listNisAssessments({})).length;
+        const response = await api.post('/store/nis2/assessments', assessmentBody, {
+          headers: {
+            ...headers('8a2413cf-4be0-4140-b0dd-e0a803e18f1d'),
+            'X-NIS2-Contract-Version': '0.9.0',
+          },
+          ...acceptAnyStatus,
+        });
+
+        expect(response.status).toBe(426);
+        expect(response.data.error).toEqual(expect.objectContaining({
+          code: 'UNSUPPORTED_CONTRACT_VERSION',
+          retryable: false,
+        }));
+        expect((await service().listNisAssessments({})).length).toBe(before);
+      });
+
+      it('requires versioned privacy consent at the direct Medusa lead boundary', async () => {
+        const before = (await service().listNisLeads({})).length;
+        const response = await api.post(
+          '/store/nis2/leads',
+          { ...leadBody, privacyConsent: false },
+          {
+            headers: headers('d43e8bab-6486-4651-ad6a-ccbd6fa84db5'),
+            ...acceptAnyStatus,
+          },
+        );
+
+        expect(response.status).toBe(400);
+        expect(response.data.error).toEqual(expect.objectContaining({
+          code: 'CONSENT_REQUIRED',
+          retryable: false,
+        }));
+        expect((await service().listNisLeads({})).length).toBe(before);
+      });
+
+      it('enforces the fleet ceiling at the direct Medusa boundary', async () => {
+        process.env.NIS2_RATE_LIMIT_ASSESSMENT_GLOBAL_MAX = '2';
+        const before = (await service().listNisAssessments({})).length;
+        const keys = [
+          '08d28098-11d0-4a6f-8e7e-d8e72ba8767d',
+          'cefe0111-47df-4b0a-8fea-669132d1293c',
+          'b2a6bb0e-a076-4b6b-8b24-c8535ad84701',
+        ];
+        const first = await api.post('/store/nis2/assessments', assessmentBody, {
+          headers: headers(keys[0]),
+          ...acceptAnyStatus,
+        });
+        const second = await api.post('/store/nis2/assessments', assessmentBody, {
+          headers: headers(keys[1]),
+          ...acceptAnyStatus,
+        });
+        const third = await api.post('/store/nis2/assessments', assessmentBody, {
+          headers: headers(keys[2]),
+          ...acceptAnyStatus,
+        });
+
+        expect([first.status, second.status, third.status]).toEqual([201, 201, 429]);
+        expect(third.headers['retry-after']).toEqual(expect.any(String));
+        expect(third.data.error).toEqual(expect.objectContaining({
+          code: 'RATE_LIMITED',
+          retryable: true,
+        }));
+        expect((await service().listNisAssessments({})).length).toBe(before + 2);
+      });
+
+      it('ignores spoofed forwarding headers when enforcing the peer-network ceiling', async () => {
+        process.env.NIS2_RATE_LIMIT_ASSESSMENT_NETWORK_MAX = '2';
+        const before = (await service().listNisAssessments({})).length;
+        const keys = [
+          '0654623d-e283-422c-8435-28acf0be9218',
+          'b547a610-f11b-4246-8e49-28c109c1b8de',
+          '6d02a90c-a52e-4ebf-870a-1803ccb59c29',
+        ];
+        const submit = (index: number) => api.post('/store/nis2/assessments', assessmentBody, {
+            headers: {
+              ...headers(keys[index]),
+              'X-Forwarded-For': `203.0.113.${index + 10}`,
+              'X-Real-IP': `198.51.100.${index + 10}`,
+            },
+            ...acceptAnyStatus,
+          });
+        const first = await submit(0);
+        const second = await submit(1);
+        const third = await submit(2);
+
+        expect([first.status, second.status, third.status]).toEqual([201, 201, 429]);
+        expect((await service().listNisAssessments({})).length).toBe(before + 2);
+      });
+
+      it('allows distinct logical submissions behind one NAT below the network ceiling', async () => {
+        process.env.NIS2_RATE_LIMIT_ASSESSMENT_NETWORK_MAX = '3';
+        process.env.NIS2_RATE_LIMIT_ASSESSMENT_KEY_MAX = '1';
+        const before = (await service().listNisAssessments({})).length;
+        const first = await api.post('/store/nis2/assessments', assessmentBody, {
+          headers: headers('c3883b15-530a-41f1-892f-8ec516822942'),
+          ...acceptAnyStatus,
+        });
+        const second = await api.post('/store/nis2/assessments', assessmentBody, {
+          headers: headers('1f93649f-ab32-4cf7-a30e-00bb9dbbb9dc'),
+          ...acceptAnyStatus,
+        });
+
+        expect([first.status, second.status]).toEqual([201, 201]);
+        expect((await service().listNisAssessments({})).length).toBe(before + 2);
+      });
+
+      it('enforces a logical-submission key ceiling before replay work', async () => {
+        process.env.NIS2_RATE_LIMIT_ASSESSMENT_KEY_MAX = '2';
+        const key = 'e1a9c1ac-a8cc-4312-9981-6b6c1448f0d9';
+        const first = await api.post('/store/nis2/assessments', assessmentBody, {
+          headers: headers(key),
+          ...acceptAnyStatus,
+        });
+        const second = await api.post('/store/nis2/assessments', assessmentBody, {
+          headers: headers(key),
+          ...acceptAnyStatus,
+        });
+        const third = await api.post('/store/nis2/assessments', assessmentBody, {
+          headers: headers(key),
+          ...acceptAnyStatus,
+        });
+
+        expect([first.status, second.status, third.status]).toEqual([201, 200, 429]);
+        expect(third.data.error.code).toBe('RATE_LIMITED');
+        expect(await service().listNisIdempotencies({ idempotency_key: key })).toHaveLength(1);
+      });
+
+      it('fails closed without a durable write when the shared limiter is unavailable', async () => {
+        limiterMode = 'error';
+        const before = (await service().listNisLeads({})).length;
+        const response = await api.post('/store/nis2/leads', leadBody, {
+          headers: headers('4449038b-abf4-4444-b411-f462a180043c'),
+          ...acceptAnyStatus,
+        });
+
+        expect(response.status).toBe(503);
+        expect(response.headers['retry-after']).toBe('1');
+        expect(response.data.error).toEqual(expect.objectContaining({
+          code: 'PERSISTENCE_UNAVAILABLE',
+          retryable: true,
+        }));
+        expect(JSON.stringify(response.data)).not.toContain(leadBody.email);
+        expect((await service().listNisLeads({})).length).toBe(before);
+      });
+
       it('serializes concurrent identical assessments to one committed row', async () => {
         const key = '5d9cac03-85c8-44a9-a218-b427a42de85e';
         const responses = await Promise.all(
