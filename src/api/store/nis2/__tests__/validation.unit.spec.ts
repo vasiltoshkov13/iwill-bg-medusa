@@ -51,7 +51,7 @@ const leadBody = {
   phone: null,
   preferredContact: 'EMAIL',
   privacyConsent: true,
-  privacyNoticeVersion: 'nis2-privacy-2026-09-04',
+  privacyNoticeVersion: 'nis2-privacy-2026-09-08-5090901008de',
   marketingConsent: false,
   marketingNoticeVersion: null,
   wantsConsultation: false,
@@ -95,7 +95,7 @@ describe('NIS2-CAMPAIGN-CONTRACT 1.0.0 request validation', () => {
         company_name: 'Организация',
         email: 'name@example.bg',
         privacy_consent: true,
-        privacy_notice_version: 'nis2-privacy-2026-09-04',
+        privacy_notice_version: 'nis2-privacy-2026-09-08-5090901008de',
         marketing_consent: false,
         marketing_notice_version: null,
       }),
@@ -138,6 +138,9 @@ describe('NIS2-CAMPAIGN-CONTRACT 1.0.0 request validation', () => {
 
   it.each([
     [{ ...leadBody, privacyConsent: false }, 'CONSENT_REQUIRED', undefined],
+    [{ ...leadBody, privacyNoticeVersion: 'nis2-privacy-2026-09-04' }, 'VALIDATION_FAILED', 'privacyNoticeVersion'],
+    [{ ...leadBody, privacyNoticeVersion: 'nis2-privacy-unknown' }, 'VALIDATION_FAILED', 'privacyNoticeVersion'],
+    [{ ...leadBody, privacyNoticeVersion: undefined }, 'VALIDATION_FAILED', 'privacyNoticeVersion'],
     [{ ...leadBody, marketingConsent: true, marketingNoticeVersion: null }, 'VALIDATION_FAILED', 'marketingNoticeVersion'],
     [{ ...leadBody, preferredContact: 'PHONE', phone: null }, 'VALIDATION_FAILED', 'phone'],
     [{ ...leadBody, phone: '12345' }, 'VALIDATION_FAILED', 'phone'],

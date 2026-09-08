@@ -4,6 +4,7 @@ import { medusaIntegrationTestRunner } from '@medusajs/test-utils';
 import { Modules } from '@medusajs/framework/utils';
 import { NIS2_MODULE } from '../../src/modules/nis2';
 import type Nis2ModuleService from '../../src/modules/nis2/service';
+import storefrontLeadBody from '../fixtures/storefront-c8998da15db913dcfae7742bb5c8af7e8a8bc3aa-lead.json';
 
 jest.setTimeout(120 * 1000);
 
@@ -38,23 +39,7 @@ const assessmentBody = {
   infrastructureNeeds: ['NETWORK_SEGMENTATION_VLAN'],
   attribution: {},
 };
-const leadBody = {
-  assessmentId: null,
-  name: 'Integration Test',
-  companyName: 'Integration Organisation',
-  jobTitle: null,
-  email: 'integration@example.invalid',
-  phone: null,
-  preferredContact: 'EMAIL',
-  privacyConsent: true,
-  privacyNoticeVersion: 'nis2-privacy-2026-09-04',
-  marketingConsent: false,
-  marketingNoticeVersion: null,
-  wantsConsultation: false,
-  answers,
-  infrastructureNeeds: ['NETWORK_SEGMENTATION_VLAN'],
-  attribution: {},
-};
+const leadBody = storefrontLeadBody;
 
 function readRequestBody(request: IncomingMessage): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -194,6 +179,50 @@ medusaIntegrationTestRunner({
           retryable: false,
         }));
         expect((await service().listNisLeads({})).length).toBe(before);
+      });
+
+      it('accepts the exact storefront c8998da lead payload as a durable write', async () => {
+        const key = '90b3f62f-8c20-4b02-9004-0d8539f76dfa';
+        const beforeLeads = (await service().listNisLeads({})).length;
+        const beforeOutbox = (await service().listNisOutboxes({})).length;
+
+        const response = await api.post('/store/nis2/leads', storefrontLeadBody, {
+          headers: headers(key),
+          ...acceptAnyStatus,
+        });
+
+        expect(response.status).toBe(201);
+        const leadId = response.data.lead.id;
+        const persisted = await service().listNisLeads({ id: leadId });
+        expect(persisted).toHaveLength(1);
+        expect(persisted[0].privacy_notice_version).toBe('nis2-privacy-2026-09-08-5090901008de');
+        expect((await service().listNisLeads({})).length).toBe(beforeLeads + 1);
+        expect((await service().listNisOutboxes({})).length).toBe(beforeOutbox + 3);
+        expect(await service().listNisIdempotencies({ endpoint_kind: 'lead', idempotency_key: key })).toHaveLength(1);
+      });
+
+      it.each([
+        ['the former approved version', 'nis2-privacy-2026-09-04', '0c5c2c4d-21e8-4a86-bff0-b9c195ccac09'],
+        ['an unknown version', 'nis2-privacy-unknown', 'eb855cb0-3149-4ea6-b502-a1a4673986d0'],
+        ['a missing version', undefined, '113d9030-a65e-444d-87d2-1f1e420248f4'],
+      ])('rejects %s before a durable write', async (_case, privacyNoticeVersion, key) => {
+        const beforeLeads = (await service().listNisLeads({})).length;
+        const beforeOutbox = (await service().listNisOutboxes({})).length;
+        const response = await api.post(
+          '/store/nis2/leads',
+          { ...storefrontLeadBody, privacyNoticeVersion },
+          { headers: headers(key), ...acceptAnyStatus },
+        );
+
+        expect(response.status).toBe(400);
+        expect(response.data.error).toEqual(expect.objectContaining({
+          code: 'VALIDATION_FAILED',
+          retryable: false,
+          field: 'privacyNoticeVersion',
+        }));
+        expect((await service().listNisLeads({})).length).toBe(beforeLeads);
+        expect((await service().listNisOutboxes({})).length).toBe(beforeOutbox);
+        expect(await service().listNisIdempotencies({ endpoint_kind: 'lead', idempotency_key: key })).toHaveLength(0);
       });
 
       it('enforces the fleet ceiling at the direct Medusa boundary', async () => {
@@ -537,7 +566,7 @@ medusaIntegrationTestRunner({
           code: 'PERSISTENCE_UNAVAILABLE',
           retryable: true,
         }));
-        expect(JSON.stringify(response.data)).not.toContain('integration@example.invalid');
+        expect(JSON.stringify(response.data)).not.toContain(storefrontLeadBody.email);
       });
     });
   },

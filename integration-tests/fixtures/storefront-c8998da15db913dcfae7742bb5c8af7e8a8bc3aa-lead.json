@@ -1,0 +1,39 @@
+{
+  "assessmentId": null,
+  "name": "Private Person",
+  "companyName": "Private Company",
+  "jobTitle": null,
+  "email": "private.person@example.bg",
+  "phone": null,
+  "preferredContact": "EMAIL",
+  "privacyConsent": true,
+  "privacyNoticeVersion": "nis2-privacy-2026-09-08-5090901008de",
+  "marketingConsent": false,
+  "marketingNoticeVersion": null,
+  "wantsConsultation": false,
+  "answers": {
+    "organizationType": "PRIVATE_ENTERPRISE",
+    "sector": "FOOD",
+    "subsector": null,
+    "employees": "E_50_249",
+    "turnover": "T_10_50M",
+    "assets": "A_10_43M",
+    "groupStatus": "NO",
+    "specialConditions": [
+      "NONE"
+    ]
+  },
+  "infrastructureNeeds": [
+    "NETWORK_SEGMENTATION_VLAN"
+  ],
+  "attribution": {
+    "sessionId": null,
+    "pagePath": null,
+    "referrerOrigin": null,
+    "utmSource": null,
+    "utmMedium": null,
+    "utmCampaign": null,
+    "utmContent": null,
+    "utmTerm": null
+  }
+}

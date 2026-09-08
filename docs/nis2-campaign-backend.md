@@ -18,6 +18,69 @@ The default fixed window is 600 seconds. Optional positive-integer overrides are
 
 Set `NIS2_MARKETING_NOTICE_VERSION` to the legal-approved marketing notice identifier before accepting any lead with `marketingConsent=true`. The backend requires an exact match and fails closed when no approved version is configured. Leave the variable unset if marketing consent is not yet enabled; `marketingConsent=false` still requires `marketingNoticeVersion=null`.
 
+Lead privacy consent is bound immutably to `nis2-privacy-2026-09-08-5090901008de`, the canonical notice identifier shipped by storefront candidate `c8998da15db913dcfae7742bb5c8af7e8a8bc3aa`. `privacyConsent` must be `true` and `privacyNoticeVersion` must match that literal. Missing, former (`nis2-privacy-2026-09-04`), and unknown versions return HTTP 400 `VALIDATION_FAILED` on `privacyNoticeVersion` before any lead, idempotency, or outbox write. The exact Medusa-bound storefront fixture is `integration-tests/fixtures/storefront-c8998da15db913dcfae7742bb5c8af7e8a8bc3aa-lead.json`.
+
+Example lead request (with the standard v1 headers and a fresh canonical UUID v4 idempotency key):
+
+```json
+{
+  "assessmentId": null,
+  "name": "Private Person",
+  "companyName": "Private Company",
+  "jobTitle": null,
+  "email": "private.person@example.bg",
+  "phone": null,
+  "preferredContact": "EMAIL",
+  "privacyConsent": true,
+  "privacyNoticeVersion": "nis2-privacy-2026-09-08-5090901008de",
+  "marketingConsent": false,
+  "marketingNoticeVersion": null,
+  "wantsConsultation": false,
+  "answers": {
+    "organizationType": "PRIVATE_ENTERPRISE",
+    "sector": "FOOD",
+    "subsector": null,
+    "employees": "E_50_249",
+    "turnover": "T_10_50M",
+    "assets": "A_10_43M",
+    "groupStatus": "NO",
+    "specialConditions": ["NONE"]
+  },
+  "infrastructureNeeds": ["NETWORK_SEGMENTATION_VLAN"],
+  "attribution": {
+    "sessionId": null,
+    "pagePath": null,
+    "referrerOrigin": null,
+    "utmSource": null,
+    "utmMedium": null,
+    "utmCampaign": null,
+    "utmContent": null,
+    "utmTerm": null
+  }
+}
+```
+
+Example first-write response (HTTP 201):
+
+```json
+{
+  "lead": {
+    "id": "nis2lead_01J9K4F6Y8M2Q7R3T5V0W1X2Z3",
+    "persistedAt": "2026-09-08T15:30:00.000Z",
+    "qualification": "qualified"
+  },
+  "requestId": "10000000-0000-4000-8000-000000000017",
+  "idempotency": { "replayed": false },
+  "delivery": {
+    "summary": "queued",
+    "ops": "queued",
+    "internalNotification": "queued"
+  }
+}
+```
+
+The Yarn-canonical runtime dependency graph pins `qs` to `6.16.0` through the root `resolutions` field. This covers the public Express parser path while preserving Medusa `2.20.1`; use the repository-pinned Yarn `4.12.0` and do not use the stale noncanonical `package-lock.json` for installation.
+
 `NIS2_CAMPAIGN_ALLOWLIST` is optional JSON with this exact shape:
 
 ```json

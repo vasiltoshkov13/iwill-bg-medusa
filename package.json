@@ -47,7 +47,8 @@
     "yalc": "^1.0.0-pre.53"
   },
   "resolutions": {
-    "lodash": "4.18.1"
+    "lodash": "4.18.1",
+    "qs": "6.16.0"
   },
   "engines": {
     "node": ">=20"

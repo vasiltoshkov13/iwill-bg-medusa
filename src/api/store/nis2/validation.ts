@@ -39,7 +39,7 @@ const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f
 const SUBSECTOR_PATTERN = /^[A-Z0-9_]+$/;
 const PHONE_PATTERN = /^[+\d][\d\s()./-]{5,}$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const PRIVACY_NOTICE_VERSION = 'nis2-privacy-2026-09-04';
+const PRIVACY_NOTICE_VERSION = 'nis2-privacy-2026-09-08-5090901008de';
 const NOTICE_VERSION_PATTERN = /^[a-z0-9][a-z0-9._-]{0,63}$/;
 
 const ANSWER_FIELDS = new Set([
