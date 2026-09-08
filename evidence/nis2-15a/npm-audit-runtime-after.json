@@ -1,0 +1,273 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "@medusajs/event-bus-redis": {
+      "name": "@medusajs/event-bus-redis",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "bullmq"
+      ],
+      "effects": [],
+      "range": "<=1.8.11 || 1.8.14-next-20240505114610 - 1.8.14-rc-20241015165116 || >=2.0.0-rc-20241001083650",
+      "nodes": [
+        "node_modules/@medusajs/event-bus-redis"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/medusa": {
+      "name": "@medusajs/medusa",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        "@medusajs/event-bus-redis",
+        "@medusajs/workflow-engine-redis"
+      ],
+      "effects": [],
+      "range": "1.20.6-next-20240502141229 - 1.20.6-rc-20241015165116 || >=1.21.0-next-20240305095805",
+      "nodes": [
+        "node_modules/@medusajs/medusa"
+      ],
+      "fixAvailable": {
+        "name": "@medusajs/medusa",
+        "version": "1.20.11",
+        "isSemVerMajor": true
+      }
+    },
+    "@medusajs/workflow-engine-redis": {
+      "name": "@medusajs/workflow-engine-redis",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "bullmq"
+      ],
+      "effects": [
+        "@medusajs/medusa"
+      ],
+      "range": "0.0.5-next-20240505114610 - 0.0.5-rc-20241015165116 || >=1.0.0-rc-20241001083650",
+      "nodes": [
+        "node_modules/@medusajs/workflow-engine-redis"
+      ],
+      "fixAvailable": {
+        "name": "@medusajs/medusa",
+        "version": "1.20.11",
+        "isSemVerMajor": true
+      }
+    },
+    "@rushstack/node-core-library": {
+      "name": "@rushstack/node-core-library",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "ajv"
+      ],
+      "effects": [
+        "@rushstack/terminal"
+      ],
+      "range": "5.0.0 - 5.20.2",
+      "nodes": [
+        "node_modules/@rushstack/node-core-library"
+      ],
+      "fixAvailable": true
+    },
+    "@rushstack/terminal": {
+      "name": "@rushstack/terminal",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@rushstack/node-core-library"
+      ],
+      "effects": [
+        "@rushstack/ts-command-line"
+      ],
+      "range": "0.11.1 - 0.22.2",
+      "nodes": [
+        "node_modules/@rushstack/terminal"
+      ],
+      "fixAvailable": true
+    },
+    "@rushstack/ts-command-line": {
+      "name": "@rushstack/ts-command-line",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@rushstack/terminal"
+      ],
+      "effects": [],
+      "range": "4.21.1 - 5.3.2",
+      "nodes": [
+        "node_modules/@rushstack/ts-command-line"
+      ],
+      "fixAvailable": true
+    },
+    "ajv": {
+      "name": "ajv",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1113715,
+          "name": "ajv",
+          "dependency": "ajv",
+          "title": "ajv has ReDoS when using `$data` option",
+          "url": "https://github.com/advisories/GHSA-2g4f-4pwh-qvx6",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-400",
+            "CWE-1333"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=7.0.0-alpha.0 <8.18.0"
+        }
+      ],
+      "effects": [
+        "@rushstack/node-core-library"
+      ],
+      "range": "7.0.0-alpha.0 - 8.17.1",
+      "nodes": [
+        "node_modules/ajv"
+      ],
+      "fixAvailable": true
+    },
+    "bullmq": {
+      "name": "bullmq",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "uuid"
+      ],
+      "effects": [
+        "@medusajs/event-bus-redis",
+        "@medusajs/workflow-engine-redis"
+      ],
+      "range": "1.0.1 - 5.58.5 || 5.66.1 - 5.76.1",
+      "nodes": [
+        "node_modules/bullmq"
+      ],
+      "fixAvailable": {
+        "name": "@medusajs/medusa",
+        "version": "1.20.11",
+        "isSemVerMajor": true
+      }
+    },
+    "express": {
+      "name": "express",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "qs"
+      ],
+      "effects": [],
+      "range": "4.22.2",
+      "nodes": [
+        "node_modules/express"
+      ],
+      "fixAvailable": true
+    },
+    "qs": {
+      "name": "qs",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1158506,
+          "name": "qs",
+          "dependency": "qs",
+          "title": "qs array-limit bypass via bracket-key comma parsing",
+          "url": "https://github.com/advisories/GHSA-x5fp-wj9c-mxmx",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 3.7,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": ">=6.14.2 <=6.15.3"
+        },
+        {
+          "source": 1158507,
+          "name": "qs",
+          "dependency": "qs",
+          "title": "qs: Denial of Service via Attacker Controlled isBuffer",
+          "url": "https://github.com/advisories/GHSA-4mjr-xmp4-gh2g",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-248",
+            "CWE-703"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": ">=2.2.5 <6.16.0"
+        }
+      ],
+      "effects": [
+        "express"
+      ],
+      "range": "2.2.5 - 6.15.3",
+      "nodes": [
+        "node_modules/express/node_modules/qs"
+      ],
+      "fixAvailable": true
+    },
+    "uuid": {
+      "name": "uuid",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1119441,
+          "name": "uuid",
+          "dependency": "uuid",
+          "title": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+          "url": "https://github.com/advisories/GHSA-w5hq-g745-h8pq",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-787",
+            "CWE-1285"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N"
+          },
+          "range": "<11.1.1"
+        }
+      ],
+      "effects": [
+        "bullmq"
+      ],
+      "range": "<11.1.1",
+      "nodes": [
+        "node_modules/bullmq/node_modules/uuid"
+      ],
+      "fixAvailable": {
+        "name": "@medusajs/medusa",
+        "version": "1.20.11",
+        "isSemVerMajor": true
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 11,
+      "high": 0,
+      "critical": 0,
+      "total": 11
+    },
+    "dependencies": {
+      "prod": 1016,
+      "dev": 0,
+      "optional": 63,
+      "peer": 34,
+      "peerOptional": 0,
+      "total": 1112
+    }
+  }
+}

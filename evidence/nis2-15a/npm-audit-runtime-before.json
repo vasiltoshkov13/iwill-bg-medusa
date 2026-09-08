@@ -1,0 +1,4016 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "@babel/core": {
+      "name": "@babel/core",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1123528,
+          "name": "@babel/core",
+          "dependency": "@babel/core",
+          "title": "@babel/core: Arbitrary File Read via sourceMappingURL Comment",
+          "url": "https://github.com/advisories/GHSA-4x5r-pxfx-6jf8",
+          "severity": "low",
+          "cwe": [
+            "CWE-22",
+            "CWE-200"
+          ],
+          "cvss": {
+            "score": 3.2,
+            "vectorString": "CVSS:3.1/AV:L/AC:H/PR:N/UI:N/S:C/C:L/I:N/A:N"
+          },
+          "range": "<=7.29.0"
+        }
+      ],
+      "effects": [],
+      "range": "<=7.29.0",
+      "nodes": [
+        "node_modules/@babel/core"
+      ],
+      "fixAvailable": true
+    },
+    "@grpc/grpc-js": {
+      "name": "@grpc/grpc-js",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1120582,
+          "name": "@grpc/grpc-js",
+          "dependency": "@grpc/grpc-js",
+          "title": "@grpc/grpc-js: A malformed request can cause a server crash",
+          "url": "https://github.com/advisories/GHSA-5375-pq7m-f5r2",
+          "severity": "high",
+          "cwe": [
+            "CWE-248"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=1.14.0 <1.14.4"
+        },
+        {
+          "source": 1120588,
+          "name": "@grpc/grpc-js",
+          "dependency": "@grpc/grpc-js",
+          "title": "@grpc/grpc-js: An incoming malformed compressed message can cause a client or server crash",
+          "url": "https://github.com/advisories/GHSA-99f4-grh7-6pcq",
+          "severity": "high",
+          "cwe": [
+            "CWE-248",
+            "CWE-400"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=1.14.0 <1.14.4"
+        }
+      ],
+      "effects": [],
+      "range": "1.14.0 - 1.14.3",
+      "nodes": [
+        "node_modules/@grpc/grpc-js"
+      ],
+      "fixAvailable": true
+    },
+    "@isaacs/brace-expansion": {
+      "name": "@isaacs/brace-expansion",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1112954,
+          "name": "@isaacs/brace-expansion",
+          "dependency": "@isaacs/brace-expansion",
+          "title": "@isaacs/brace-expansion has Uncontrolled Resource Consumption",
+          "url": "https://github.com/advisories/GHSA-7h2j-956f-4vf2",
+          "severity": "high",
+          "cwe": [
+            "CWE-1333"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<=5.0.0"
+        }
+      ],
+      "effects": [],
+      "range": "5.0.0",
+      "nodes": [
+        "node_modules/@isaacs/brace-expansion"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/admin-bundler": {
+      "name": "@medusajs/admin-bundler",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@medusajs/admin-vite-plugin",
+        "@medusajs/dashboard",
+        "express",
+        "vite"
+      ],
+      "effects": [
+        "@medusajs/medusa"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@medusajs/admin-bundler"
+      ],
+      "fixAvailable": false
+    },
+    "@medusajs/admin-vite-plugin": {
+      "name": "@medusajs/admin-vite-plugin",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "vite"
+      ],
+      "effects": [
+        "@medusajs/admin-bundler"
+      ],
+      "range": "<=2.19.0-snapshot-20260813102506",
+      "nodes": [
+        "node_modules/@medusajs/admin-vite-plugin"
+      ],
+      "fixAvailable": false
+    },
+    "@medusajs/analytics": {
+      "name": "@medusajs/analytics",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/analytics"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/analytics-local": {
+      "name": "@medusajs/analytics-local",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/analytics-local"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/analytics-posthog": {
+      "name": "@medusajs/analytics-posthog",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/analytics-posthog"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/api-key": {
+      "name": "@medusajs/api-key",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/api-key"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/auth": {
+      "name": "@medusajs/auth",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/auth"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/auth-emailpass": {
+      "name": "@medusajs/auth-emailpass",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/auth-emailpass"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/auth-github": {
+      "name": "@medusajs/auth-github",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/auth-github"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/auth-google": {
+      "name": "@medusajs/auth-google",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/auth-google"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/cache-inmemory": {
+      "name": "@medusajs/cache-inmemory",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/cache-inmemory"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/cache-redis": {
+      "name": "@medusajs/cache-redis",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/cache-redis"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/caching": {
+      "name": "@medusajs/caching",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "<=2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/caching"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/caching-redis": {
+      "name": "@medusajs/caching-redis",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "<=2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/caching-redis"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/cart": {
+      "name": "@medusajs/cart",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/cart"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/cli": {
+      "name": "@medusajs/cli",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        "@medusajs/deps",
+        "@medusajs/telemetry",
+        "@medusajs/utils",
+        "express"
+      ],
+      "effects": [],
+      "range": "*",
+      "nodes": [
+        "node_modules/@medusajs/cli"
+      ],
+      "fixAvailable": {
+        "name": "@medusajs/cli",
+        "version": "2.20.1",
+        "isSemVerMajor": false
+      }
+    },
+    "@medusajs/core-flows": {
+      "name": "@medusajs/core-flows",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [
+        "@medusajs/medusa",
+        "@medusajs/test-utils"
+      ],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/core-flows"
+      ],
+      "fixAvailable": false
+    },
+    "@medusajs/currency": {
+      "name": "@medusajs/currency",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/currency"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/customer": {
+      "name": "@medusajs/customer",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/customer"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/dashboard": {
+      "name": "@medusajs/dashboard",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "i18next-http-backend",
+        "react-router-dom"
+      ],
+      "effects": [
+        "@medusajs/admin-bundler"
+      ],
+      "range": "<=2.19.0-snapshot-20260813102506",
+      "nodes": [
+        "node_modules/@medusajs/dashboard"
+      ],
+      "fixAvailable": false
+    },
+    "@medusajs/deps": {
+      "name": "@medusajs/deps",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@mikro-orm/cli",
+        "@mikro-orm/core",
+        "@mikro-orm/knex",
+        "@mikro-orm/migrations",
+        "@mikro-orm/postgresql",
+        "@opentelemetry/sdk-node"
+      ],
+      "effects": [
+        "@medusajs/cli",
+        "@medusajs/framework",
+        "@medusajs/modules-sdk",
+        "@medusajs/orchestration",
+        "@medusajs/utils",
+        "@medusajs/workflows-sdk"
+      ],
+      "range": "<=2.16.0-options-preview-20260605124754",
+      "nodes": [
+        "node_modules/@medusajs/deps"
+      ],
+      "fixAvailable": false
+    },
+    "@medusajs/draft-order": {
+      "name": "@medusajs/draft-order",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/cli",
+        "@medusajs/framework",
+        "@medusajs/test-utils",
+        "react-router-dom"
+      ],
+      "effects": [
+        "@medusajs/medusa"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@medusajs/draft-order"
+      ],
+      "fixAvailable": false
+    },
+    "@medusajs/event-bus-local": {
+      "name": "@medusajs/event-bus-local",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/event-bus-local"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/event-bus-redis": {
+      "name": "@medusajs/event-bus-redis",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework",
+        "bullmq"
+      ],
+      "effects": [],
+      "range": "<=1.8.11 || 1.8.14-next-20240505114610 - 1.8.14-rc-20241015165116 || >=2.0.0-rc-20241001083650",
+      "nodes": [
+        "node_modules/@medusajs/event-bus-redis"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/file": {
+      "name": "@medusajs/file",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/file"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/file-local": {
+      "name": "@medusajs/file-local",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/file-local"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/file-s3": {
+      "name": "@medusajs/file-s3",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/file-s3"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/framework": {
+      "name": "@medusajs/framework",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        "@medusajs/cli",
+        "@medusajs/deps",
+        "@medusajs/modules-sdk",
+        "@medusajs/orchestration",
+        "@medusajs/telemetry",
+        "@medusajs/types",
+        "@medusajs/utils",
+        "@medusajs/workflows-sdk",
+        "express"
+      ],
+      "effects": [
+        "@medusajs/analytics",
+        "@medusajs/analytics-local",
+        "@medusajs/analytics-posthog",
+        "@medusajs/api-key",
+        "@medusajs/auth",
+        "@medusajs/auth-emailpass",
+        "@medusajs/auth-github",
+        "@medusajs/auth-google",
+        "@medusajs/cache-inmemory",
+        "@medusajs/cache-redis",
+        "@medusajs/caching",
+        "@medusajs/caching-redis",
+        "@medusajs/cart",
+        "@medusajs/core-flows",
+        "@medusajs/currency",
+        "@medusajs/customer",
+        "@medusajs/draft-order",
+        "@medusajs/event-bus-local",
+        "@medusajs/event-bus-redis",
+        "@medusajs/file",
+        "@medusajs/file-local",
+        "@medusajs/file-s3",
+        "@medusajs/fulfillment",
+        "@medusajs/fulfillment-manual",
+        "@medusajs/index",
+        "@medusajs/inventory",
+        "@medusajs/link-modules",
+        "@medusajs/locking",
+        "@medusajs/locking-postgres",
+        "@medusajs/locking-redis",
+        "@medusajs/medusa",
+        "@medusajs/notification",
+        "@medusajs/notification-local",
+        "@medusajs/notification-sendgrid",
+        "@medusajs/order",
+        "@medusajs/payment",
+        "@medusajs/payment-stripe",
+        "@medusajs/pricing",
+        "@medusajs/product",
+        "@medusajs/promotion",
+        "@medusajs/rbac",
+        "@medusajs/region",
+        "@medusajs/sales-channel",
+        "@medusajs/settings",
+        "@medusajs/stock-location",
+        "@medusajs/store",
+        "@medusajs/tax",
+        "@medusajs/test-utils",
+        "@medusajs/translation",
+        "@medusajs/user",
+        "@medusajs/workflow-engine-inmemory",
+        "@medusajs/workflow-engine-redis"
+      ],
+      "range": ">=0.0.2-rc-20241015165116",
+      "nodes": [
+        "node_modules/@medusajs/framework"
+      ],
+      "fixAvailable": false
+    },
+    "@medusajs/fulfillment": {
+      "name": "@medusajs/fulfillment",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/fulfillment"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/fulfillment-manual": {
+      "name": "@medusajs/fulfillment-manual",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/fulfillment-manual"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/index": {
+      "name": "@medusajs/index",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/index"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/inventory": {
+      "name": "@medusajs/inventory",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/inventory"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/link-modules": {
+      "name": "@medusajs/link-modules",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/link-modules"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/locking": {
+      "name": "@medusajs/locking",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/locking"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/locking-postgres": {
+      "name": "@medusajs/locking-postgres",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/locking-postgres"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/locking-redis": {
+      "name": "@medusajs/locking-redis",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/locking-redis"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/medusa": {
+      "name": "@medusajs/medusa",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        "@medusajs/admin-bundler",
+        "@medusajs/analytics",
+        "@medusajs/analytics-local",
+        "@medusajs/analytics-posthog",
+        "@medusajs/api-key",
+        "@medusajs/auth",
+        "@medusajs/auth-emailpass",
+        "@medusajs/auth-github",
+        "@medusajs/auth-google",
+        "@medusajs/cache-inmemory",
+        "@medusajs/cache-redis",
+        "@medusajs/caching",
+        "@medusajs/caching-redis",
+        "@medusajs/cart",
+        "@medusajs/core-flows",
+        "@medusajs/currency",
+        "@medusajs/customer",
+        "@medusajs/draft-order",
+        "@medusajs/event-bus-local",
+        "@medusajs/event-bus-redis",
+        "@medusajs/file",
+        "@medusajs/file-local",
+        "@medusajs/file-s3",
+        "@medusajs/framework",
+        "@medusajs/fulfillment",
+        "@medusajs/fulfillment-manual",
+        "@medusajs/index",
+        "@medusajs/inventory",
+        "@medusajs/link-modules",
+        "@medusajs/locking",
+        "@medusajs/locking-postgres",
+        "@medusajs/locking-redis",
+        "@medusajs/notification",
+        "@medusajs/notification-local",
+        "@medusajs/notification-sendgrid",
+        "@medusajs/order",
+        "@medusajs/payment",
+        "@medusajs/payment-stripe",
+        "@medusajs/pricing",
+        "@medusajs/product",
+        "@medusajs/promotion",
+        "@medusajs/rbac",
+        "@medusajs/region",
+        "@medusajs/sales-channel",
+        "@medusajs/settings",
+        "@medusajs/stock-location",
+        "@medusajs/store",
+        "@medusajs/tax",
+        "@medusajs/telemetry",
+        "@medusajs/translation",
+        "@medusajs/user",
+        "@medusajs/workflow-engine-inmemory",
+        "@medusajs/workflow-engine-redis",
+        "express",
+        "uuid"
+      ],
+      "effects": [
+        "@medusajs/test-utils"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@medusajs/medusa"
+      ],
+      "fixAvailable": false
+    },
+    "@medusajs/modules-sdk": {
+      "name": "@medusajs/modules-sdk",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/deps",
+        "@medusajs/orchestration",
+        "@medusajs/utils"
+      ],
+      "effects": [
+        "@medusajs/framework",
+        "@medusajs/workflows-sdk"
+      ],
+      "range": "1.8.8-beta-20230618193938 - 1.8.8-beta-20230619165231 || 1.9.1-canary-20230806135701 - 1.9.1-next-20230807085704 || 2.11.0 - 2.13.5 || 2.19.0-preview-20260730122936 - 2.19.0-snapshot-20260813102506",
+      "nodes": [
+        "node_modules/@medusajs/modules-sdk"
+      ],
+      "fixAvailable": false
+    },
+    "@medusajs/notification": {
+      "name": "@medusajs/notification",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/notification"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/notification-local": {
+      "name": "@medusajs/notification-local",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/notification-local"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/notification-sendgrid": {
+      "name": "@medusajs/notification-sendgrid",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/notification-sendgrid"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/orchestration": {
+      "name": "@medusajs/orchestration",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/deps",
+        "@medusajs/utils"
+      ],
+      "effects": [
+        "@medusajs/modules-sdk"
+      ],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/orchestration"
+      ],
+      "fixAvailable": false
+    },
+    "@medusajs/order": {
+      "name": "@medusajs/order",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/order"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/payment": {
+      "name": "@medusajs/payment",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/payment"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/payment-stripe": {
+      "name": "@medusajs/payment-stripe",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/payment-stripe"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/pricing": {
+      "name": "@medusajs/pricing",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/pricing"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/product": {
+      "name": "@medusajs/product",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/product"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/promotion": {
+      "name": "@medusajs/promotion",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/promotion"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/rbac": {
+      "name": "@medusajs/rbac",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [
+        "@medusajs/medusa"
+      ],
+      "range": "<=2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/rbac"
+      ],
+      "fixAvailable": false
+    },
+    "@medusajs/region": {
+      "name": "@medusajs/region",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/region"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/sales-channel": {
+      "name": "@medusajs/sales-channel",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/sales-channel"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/settings": {
+      "name": "@medusajs/settings",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/settings"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/stock-location": {
+      "name": "@medusajs/stock-location",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/stock-location"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/store": {
+      "name": "@medusajs/store",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/store"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/tax": {
+      "name": "@medusajs/tax",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/tax"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/telemetry": {
+      "name": "@medusajs/telemetry",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "uuid"
+      ],
+      "effects": [
+        "@medusajs/cli",
+        "@medusajs/framework",
+        "@medusajs/medusa"
+      ],
+      "range": "<=2.16.0-options-preview-20260605124754",
+      "nodes": [
+        "node_modules/@medusajs/telemetry"
+      ],
+      "fixAvailable": false
+    },
+    "@medusajs/test-utils": {
+      "name": "@medusajs/test-utils",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        "@medusajs/core-flows",
+        "@medusajs/framework",
+        "@medusajs/medusa",
+        "express"
+      ],
+      "effects": [
+        "@medusajs/draft-order"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@medusajs/test-utils"
+      ],
+      "fixAvailable": false
+    },
+    "@medusajs/translation": {
+      "name": "@medusajs/translation",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [
+        "@medusajs/medusa"
+      ],
+      "range": "<=2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/translation"
+      ],
+      "fixAvailable": false
+    },
+    "@medusajs/types": {
+      "name": "@medusajs/types",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "vite"
+      ],
+      "effects": [
+        "@medusajs/framework"
+      ],
+      "range": "1.12.0-next-20240321130526 - 2.5.1 || 2.11.3 - 2.19.0-snapshot-20260813102506",
+      "nodes": [
+        "node_modules/@medusajs/types"
+      ],
+      "fixAvailable": false
+    },
+    "@medusajs/user": {
+      "name": "@medusajs/user",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/user"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/utils": {
+      "name": "@medusajs/utils",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/deps",
+        "express"
+      ],
+      "effects": [
+        "@medusajs/modules-sdk"
+      ],
+      "range": ">=1.12.0-next-20240425093236",
+      "nodes": [
+        "node_modules/@medusajs/utils"
+      ],
+      "fixAvailable": false
+    },
+    "@medusajs/workflow-engine-inmemory": {
+      "name": "@medusajs/workflow-engine-inmemory",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5",
+      "nodes": [
+        "node_modules/@medusajs/workflow-engine-inmemory"
+      ],
+      "fixAvailable": true
+    },
+    "@medusajs/workflow-engine-redis": {
+      "name": "@medusajs/workflow-engine-redis",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/framework",
+        "bullmq"
+      ],
+      "effects": [
+        "@medusajs/medusa"
+      ],
+      "range": "0.0.5-next-20240505114610 - 0.0.5-rc-20241015165116 || >=1.0.0-rc-20241001083650",
+      "nodes": [
+        "node_modules/@medusajs/workflow-engine-redis"
+      ],
+      "fixAvailable": false
+    },
+    "@medusajs/workflows-sdk": {
+      "name": "@medusajs/workflows-sdk",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@medusajs/deps",
+        "@medusajs/modules-sdk",
+        "@medusajs/orchestration",
+        "@medusajs/utils"
+      ],
+      "effects": [],
+      "range": "2.11.0 - 2.13.5 || 2.19.0-preview-20260803001937 - 2.19.0-snapshot-20260813102506",
+      "nodes": [
+        "node_modules/@medusajs/workflows-sdk"
+      ],
+      "fixAvailable": true
+    },
+    "@mikro-orm/cli": {
+      "name": "@mikro-orm/cli",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@mikro-orm/core",
+        "@mikro-orm/knex"
+      ],
+      "effects": [],
+      "range": "<=6.6.13",
+      "nodes": [
+        "node_modules/@mikro-orm/cli"
+      ],
+      "fixAvailable": true
+    },
+    "@mikro-orm/core": {
+      "name": "@mikro-orm/core",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1115716,
+          "name": "@mikro-orm/core",
+          "dependency": "@mikro-orm/core",
+          "title": "MikroORM has Prototype Pollution in Utils.merge",
+          "url": "https://github.com/advisories/GHSA-qpfv-44f3-qqx6",
+          "severity": "high",
+          "cwe": [
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<6.6.10"
+        },
+        {
+          "source": 1115718,
+          "name": "@mikro-orm/core",
+          "dependency": "@mikro-orm/core",
+          "title": "MikroORM is vulnerable to SQL Injection via specially crafted object",
+          "url": "https://github.com/advisories/GHSA-gwhv-j974-6fxm",
+          "severity": "critical",
+          "cwe": [
+            "CWE-89"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<6.6.10"
+        }
+      ],
+      "effects": [
+        "@medusajs/deps",
+        "@mikro-orm/cli"
+      ],
+      "range": "<=6.6.10-dev.1",
+      "nodes": [
+        "node_modules/@mikro-orm/core"
+      ],
+      "fixAvailable": false
+    },
+    "@mikro-orm/knex": {
+      "name": "@mikro-orm/knex",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1120259,
+          "name": "@mikro-orm/knex",
+          "dependency": "@mikro-orm/knex",
+          "title": "MikroORM has SQL injection via runtime-controlled identifiers and JSON-path keys",
+          "url": "https://github.com/advisories/GHSA-cfw5-68c4-ffqp",
+          "severity": "high",
+          "cwe": [
+            "CWE-89"
+          ],
+          "cvss": {
+            "score": 7.6,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:L/A:L"
+          },
+          "range": "<=6.6.13"
+        }
+      ],
+      "effects": [
+        "@medusajs/deps",
+        "@mikro-orm/cli",
+        "@mikro-orm/migrations",
+        "@mikro-orm/postgresql"
+      ],
+      "range": "<=6.6.13",
+      "nodes": [
+        "node_modules/@mikro-orm/knex"
+      ],
+      "fixAvailable": false
+    },
+    "@mikro-orm/migrations": {
+      "name": "@mikro-orm/migrations",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@mikro-orm/knex"
+      ],
+      "effects": [],
+      "range": "<=6.6.13",
+      "nodes": [
+        "node_modules/@mikro-orm/migrations"
+      ],
+      "fixAvailable": true
+    },
+    "@mikro-orm/postgresql": {
+      "name": "@mikro-orm/postgresql",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@mikro-orm/knex"
+      ],
+      "effects": [],
+      "range": "<=6.6.13",
+      "nodes": [
+        "node_modules/@mikro-orm/postgresql"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/core": {
+      "name": "@opentelemetry/core",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1153174,
+          "name": "@opentelemetry/core",
+          "dependency": "@opentelemetry/core",
+          "title": "OpenTelemetry Core: Unbounded memory allocation in W3C Baggage propagation",
+          "url": "https://github.com/advisories/GHSA-8988-4f7v-96qf",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": "<2.8.0"
+        }
+      ],
+      "effects": [
+        "@opentelemetry/exporter-logs-otlp-grpc",
+        "@opentelemetry/exporter-logs-otlp-http",
+        "@opentelemetry/exporter-logs-otlp-proto",
+        "@opentelemetry/exporter-metrics-otlp-grpc",
+        "@opentelemetry/exporter-metrics-otlp-http",
+        "@opentelemetry/exporter-metrics-otlp-proto",
+        "@opentelemetry/exporter-prometheus",
+        "@opentelemetry/exporter-trace-otlp-grpc",
+        "@opentelemetry/exporter-trace-otlp-http",
+        "@opentelemetry/exporter-trace-otlp-proto",
+        "@opentelemetry/exporter-zipkin",
+        "@opentelemetry/otlp-exporter-base",
+        "@opentelemetry/otlp-grpc-exporter-base",
+        "@opentelemetry/otlp-transformer",
+        "@opentelemetry/propagator-b3",
+        "@opentelemetry/propagator-jaeger",
+        "@opentelemetry/resources",
+        "@opentelemetry/sdk-logs",
+        "@opentelemetry/sdk-metrics",
+        "@opentelemetry/sdk-node",
+        "@opentelemetry/sdk-trace-base",
+        "@opentelemetry/sdk-trace-node"
+      ],
+      "range": "<2.8.0",
+      "nodes": [
+        "node_modules/@opentelemetry/core",
+        "node_modules/@opentelemetry/exporter-logs-otlp-grpc/node_modules/@opentelemetry/core",
+        "node_modules/@opentelemetry/exporter-logs-otlp-http/node_modules/@opentelemetry/core",
+        "node_modules/@opentelemetry/exporter-logs-otlp-proto/node_modules/@opentelemetry/core",
+        "node_modules/@opentelemetry/exporter-metrics-otlp-grpc/node_modules/@opentelemetry/core",
+        "node_modules/@opentelemetry/exporter-metrics-otlp-http/node_modules/@opentelemetry/core",
+        "node_modules/@opentelemetry/exporter-metrics-otlp-proto/node_modules/@opentelemetry/core",
+        "node_modules/@opentelemetry/exporter-prometheus/node_modules/@opentelemetry/core",
+        "node_modules/@opentelemetry/exporter-trace-otlp-grpc/node_modules/@opentelemetry/core",
+        "node_modules/@opentelemetry/exporter-trace-otlp-http/node_modules/@opentelemetry/core",
+        "node_modules/@opentelemetry/exporter-trace-otlp-proto/node_modules/@opentelemetry/core",
+        "node_modules/@opentelemetry/exporter-zipkin/node_modules/@opentelemetry/core",
+        "node_modules/@opentelemetry/otlp-exporter-base/node_modules/@opentelemetry/core",
+        "node_modules/@opentelemetry/otlp-grpc-exporter-base/node_modules/@opentelemetry/core",
+        "node_modules/@opentelemetry/otlp-transformer/node_modules/@opentelemetry/core",
+        "node_modules/@opentelemetry/propagator-b3/node_modules/@opentelemetry/core",
+        "node_modules/@opentelemetry/propagator-jaeger/node_modules/@opentelemetry/core",
+        "node_modules/@opentelemetry/sdk-logs/node_modules/@opentelemetry/core",
+        "node_modules/@opentelemetry/sdk-metrics/node_modules/@opentelemetry/core",
+        "node_modules/@opentelemetry/sdk-node/node_modules/@opentelemetry/core",
+        "node_modules/@opentelemetry/sdk-trace-base/node_modules/@opentelemetry/core"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/exporter-logs-otlp-grpc": {
+      "name": "@opentelemetry/exporter-logs-otlp-grpc",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core",
+        "@opentelemetry/otlp-exporter-base",
+        "@opentelemetry/otlp-grpc-exporter-base",
+        "@opentelemetry/otlp-transformer",
+        "@opentelemetry/sdk-logs"
+      ],
+      "effects": [
+        "@opentelemetry/sdk-node"
+      ],
+      "range": "<=0.218.0",
+      "nodes": [
+        "node_modules/@opentelemetry/exporter-logs-otlp-grpc"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/exporter-logs-otlp-http": {
+      "name": "@opentelemetry/exporter-logs-otlp-http",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core",
+        "@opentelemetry/otlp-exporter-base",
+        "@opentelemetry/otlp-transformer",
+        "@opentelemetry/sdk-logs"
+      ],
+      "effects": [],
+      "range": "<=0.218.0",
+      "nodes": [
+        "node_modules/@opentelemetry/exporter-logs-otlp-http"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/exporter-logs-otlp-proto": {
+      "name": "@opentelemetry/exporter-logs-otlp-proto",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core",
+        "@opentelemetry/otlp-exporter-base",
+        "@opentelemetry/otlp-transformer",
+        "@opentelemetry/resources",
+        "@opentelemetry/sdk-logs",
+        "@opentelemetry/sdk-trace-base"
+      ],
+      "effects": [],
+      "range": "<=0.218.0",
+      "nodes": [
+        "node_modules/@opentelemetry/exporter-logs-otlp-proto"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/exporter-metrics-otlp-grpc": {
+      "name": "@opentelemetry/exporter-metrics-otlp-grpc",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core",
+        "@opentelemetry/exporter-metrics-otlp-http",
+        "@opentelemetry/otlp-exporter-base",
+        "@opentelemetry/otlp-grpc-exporter-base",
+        "@opentelemetry/otlp-transformer",
+        "@opentelemetry/resources",
+        "@opentelemetry/sdk-metrics"
+      ],
+      "effects": [
+        "@opentelemetry/sdk-node"
+      ],
+      "range": "<=0.218.0",
+      "nodes": [
+        "node_modules/@opentelemetry/exporter-metrics-otlp-grpc"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/exporter-metrics-otlp-http": {
+      "name": "@opentelemetry/exporter-metrics-otlp-http",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core",
+        "@opentelemetry/otlp-exporter-base",
+        "@opentelemetry/otlp-transformer",
+        "@opentelemetry/resources",
+        "@opentelemetry/sdk-metrics"
+      ],
+      "effects": [],
+      "range": "<=0.218.0",
+      "nodes": [
+        "node_modules/@opentelemetry/exporter-metrics-otlp-http"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/exporter-metrics-otlp-proto": {
+      "name": "@opentelemetry/exporter-metrics-otlp-proto",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core",
+        "@opentelemetry/exporter-metrics-otlp-http",
+        "@opentelemetry/otlp-exporter-base",
+        "@opentelemetry/otlp-transformer",
+        "@opentelemetry/resources",
+        "@opentelemetry/sdk-metrics"
+      ],
+      "effects": [],
+      "range": "<=0.218.0",
+      "nodes": [
+        "node_modules/@opentelemetry/exporter-metrics-otlp-proto"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/exporter-prometheus": {
+      "name": "@opentelemetry/exporter-prometheus",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core",
+        "@opentelemetry/resources",
+        "@opentelemetry/sdk-metrics",
+        {
+          "source": 1120253,
+          "name": "@opentelemetry/exporter-prometheus",
+          "dependency": "@opentelemetry/exporter-prometheus",
+          "title": "Prometheus exporter process crash via malformed HTTP request",
+          "url": "https://github.com/advisories/GHSA-q7rr-3cgh-j5r3",
+          "severity": "high",
+          "cwe": [
+            "CWE-755"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<0.217.0"
+        }
+      ],
+      "effects": [
+        "@opentelemetry/sdk-node"
+      ],
+      "range": "<=0.218.0",
+      "nodes": [
+        "node_modules/@opentelemetry/exporter-prometheus"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/exporter-trace-otlp-grpc": {
+      "name": "@opentelemetry/exporter-trace-otlp-grpc",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core",
+        "@opentelemetry/otlp-exporter-base",
+        "@opentelemetry/otlp-grpc-exporter-base",
+        "@opentelemetry/otlp-transformer",
+        "@opentelemetry/resources",
+        "@opentelemetry/sdk-trace-base"
+      ],
+      "effects": [
+        "@opentelemetry/sdk-node"
+      ],
+      "range": "<=0.218.0",
+      "nodes": [
+        "node_modules/@opentelemetry/exporter-trace-otlp-grpc"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/exporter-trace-otlp-http": {
+      "name": "@opentelemetry/exporter-trace-otlp-http",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core",
+        "@opentelemetry/otlp-exporter-base",
+        "@opentelemetry/otlp-transformer",
+        "@opentelemetry/resources",
+        "@opentelemetry/sdk-trace-base"
+      ],
+      "effects": [],
+      "range": "<=0.218.0",
+      "nodes": [
+        "node_modules/@opentelemetry/exporter-trace-otlp-http"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/exporter-trace-otlp-proto": {
+      "name": "@opentelemetry/exporter-trace-otlp-proto",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core",
+        "@opentelemetry/otlp-exporter-base",
+        "@opentelemetry/otlp-transformer",
+        "@opentelemetry/resources",
+        "@opentelemetry/sdk-trace-base"
+      ],
+      "effects": [],
+      "range": "<=0.218.0",
+      "nodes": [
+        "node_modules/@opentelemetry/exporter-trace-otlp-proto"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/exporter-zipkin": {
+      "name": "@opentelemetry/exporter-zipkin",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core",
+        "@opentelemetry/resources",
+        "@opentelemetry/sdk-trace-base"
+      ],
+      "effects": [],
+      "range": "<=2.7.1",
+      "nodes": [
+        "node_modules/@opentelemetry/exporter-zipkin"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/otlp-exporter-base": {
+      "name": "@opentelemetry/otlp-exporter-base",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core",
+        "@opentelemetry/otlp-transformer"
+      ],
+      "effects": [
+        "@opentelemetry/exporter-logs-otlp-grpc",
+        "@opentelemetry/exporter-metrics-otlp-grpc",
+        "@opentelemetry/exporter-metrics-otlp-http",
+        "@opentelemetry/exporter-metrics-otlp-proto",
+        "@opentelemetry/exporter-trace-otlp-grpc",
+        "@opentelemetry/exporter-trace-otlp-http",
+        "@opentelemetry/exporter-trace-otlp-proto"
+      ],
+      "range": "<=0.218.0",
+      "nodes": [
+        "node_modules/@opentelemetry/otlp-exporter-base"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/otlp-grpc-exporter-base": {
+      "name": "@opentelemetry/otlp-grpc-exporter-base",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core",
+        "@opentelemetry/otlp-exporter-base",
+        "@opentelemetry/otlp-transformer"
+      ],
+      "effects": [
+        "@opentelemetry/exporter-metrics-otlp-grpc",
+        "@opentelemetry/exporter-trace-otlp-grpc"
+      ],
+      "range": "<=0.218.0",
+      "nodes": [
+        "node_modules/@opentelemetry/otlp-grpc-exporter-base"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/otlp-transformer": {
+      "name": "@opentelemetry/otlp-transformer",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core",
+        "@opentelemetry/resources",
+        "@opentelemetry/sdk-logs",
+        "@opentelemetry/sdk-metrics",
+        "@opentelemetry/sdk-trace-base"
+      ],
+      "effects": [
+        "@opentelemetry/exporter-metrics-otlp-grpc",
+        "@opentelemetry/exporter-metrics-otlp-http",
+        "@opentelemetry/exporter-metrics-otlp-proto",
+        "@opentelemetry/exporter-trace-otlp-grpc",
+        "@opentelemetry/exporter-trace-otlp-http",
+        "@opentelemetry/exporter-trace-otlp-proto",
+        "@opentelemetry/otlp-exporter-base",
+        "@opentelemetry/otlp-grpc-exporter-base"
+      ],
+      "range": "<=0.218.0",
+      "nodes": [
+        "node_modules/@opentelemetry/otlp-transformer"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/propagator-b3": {
+      "name": "@opentelemetry/propagator-b3",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core"
+      ],
+      "effects": [
+        "@opentelemetry/sdk-node"
+      ],
+      "range": "0.19.1-alpha.11 - 2.7.1",
+      "nodes": [
+        "node_modules/@opentelemetry/propagator-b3"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/propagator-jaeger": {
+      "name": "@opentelemetry/propagator-jaeger",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core",
+        {
+          "source": 1124011,
+          "name": "@opentelemetry/propagator-jaeger",
+          "dependency": "@opentelemetry/propagator-jaeger",
+          "title": "OpenTelemetry JavaScript: Denial of service in `JaegerPropagator` via unhandled exception on a malformed header",
+          "url": "https://github.com/advisories/GHSA-45rx-2jwx-cxfr",
+          "severity": "high",
+          "cwe": [
+            "CWE-248"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<2.9.0"
+        }
+      ],
+      "effects": [
+        "@opentelemetry/sdk-node"
+      ],
+      "range": "<=2.8.0",
+      "nodes": [
+        "node_modules/@opentelemetry/propagator-jaeger"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/resources": {
+      "name": "@opentelemetry/resources",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core"
+      ],
+      "effects": [
+        "@opentelemetry/exporter-prometheus",
+        "@opentelemetry/exporter-zipkin"
+      ],
+      "range": "0.8.0 - 2.7.1",
+      "nodes": [
+        "node_modules/@opentelemetry/exporter-logs-otlp-proto/node_modules/@opentelemetry/resources",
+        "node_modules/@opentelemetry/exporter-metrics-otlp-grpc/node_modules/@opentelemetry/resources",
+        "node_modules/@opentelemetry/exporter-metrics-otlp-http/node_modules/@opentelemetry/resources",
+        "node_modules/@opentelemetry/exporter-metrics-otlp-proto/node_modules/@opentelemetry/resources",
+        "node_modules/@opentelemetry/exporter-prometheus/node_modules/@opentelemetry/resources",
+        "node_modules/@opentelemetry/exporter-trace-otlp-grpc/node_modules/@opentelemetry/resources",
+        "node_modules/@opentelemetry/exporter-trace-otlp-http/node_modules/@opentelemetry/resources",
+        "node_modules/@opentelemetry/exporter-trace-otlp-proto/node_modules/@opentelemetry/resources",
+        "node_modules/@opentelemetry/exporter-zipkin/node_modules/@opentelemetry/resources",
+        "node_modules/@opentelemetry/otlp-transformer/node_modules/@opentelemetry/resources",
+        "node_modules/@opentelemetry/resources",
+        "node_modules/@opentelemetry/sdk-logs/node_modules/@opentelemetry/resources",
+        "node_modules/@opentelemetry/sdk-metrics/node_modules/@opentelemetry/resources",
+        "node_modules/@opentelemetry/sdk-node/node_modules/@opentelemetry/resources",
+        "node_modules/@opentelemetry/sdk-trace-base/node_modules/@opentelemetry/resources"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/sdk-logs": {
+      "name": "@opentelemetry/sdk-logs",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core",
+        "@opentelemetry/resources"
+      ],
+      "effects": [
+        "@opentelemetry/otlp-transformer",
+        "@opentelemetry/sdk-node"
+      ],
+      "range": "<=0.218.0",
+      "nodes": [
+        "node_modules/@opentelemetry/sdk-logs"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/sdk-metrics": {
+      "name": "@opentelemetry/sdk-metrics",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core",
+        "@opentelemetry/resources"
+      ],
+      "effects": [
+        "@opentelemetry/exporter-metrics-otlp-grpc",
+        "@opentelemetry/exporter-metrics-otlp-http",
+        "@opentelemetry/exporter-metrics-otlp-proto",
+        "@opentelemetry/exporter-prometheus",
+        "@opentelemetry/otlp-transformer",
+        "@opentelemetry/sdk-node"
+      ],
+      "range": "<=2.7.1",
+      "nodes": [
+        "node_modules/@opentelemetry/sdk-metrics"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/sdk-node": {
+      "name": "@opentelemetry/sdk-node",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core",
+        "@opentelemetry/exporter-logs-otlp-grpc",
+        "@opentelemetry/exporter-logs-otlp-http",
+        "@opentelemetry/exporter-logs-otlp-proto",
+        "@opentelemetry/exporter-metrics-otlp-grpc",
+        "@opentelemetry/exporter-metrics-otlp-http",
+        "@opentelemetry/exporter-metrics-otlp-proto",
+        "@opentelemetry/exporter-prometheus",
+        "@opentelemetry/exporter-trace-otlp-grpc",
+        "@opentelemetry/exporter-trace-otlp-http",
+        "@opentelemetry/exporter-trace-otlp-proto",
+        "@opentelemetry/exporter-zipkin",
+        "@opentelemetry/propagator-b3",
+        "@opentelemetry/propagator-jaeger",
+        "@opentelemetry/resources",
+        "@opentelemetry/sdk-logs",
+        "@opentelemetry/sdk-metrics",
+        "@opentelemetry/sdk-trace-base",
+        "@opentelemetry/sdk-trace-node",
+        {
+          "source": 1120252,
+          "name": "@opentelemetry/sdk-node",
+          "dependency": "@opentelemetry/sdk-node",
+          "title": "Prometheus exporter process crash via malformed HTTP request",
+          "url": "https://github.com/advisories/GHSA-q7rr-3cgh-j5r3",
+          "severity": "high",
+          "cwe": [
+            "CWE-755"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<0.217.0"
+        }
+      ],
+      "effects": [],
+      "range": "<=0.219.0",
+      "nodes": [
+        "node_modules/@opentelemetry/sdk-node"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/sdk-trace-base": {
+      "name": "@opentelemetry/sdk-trace-base",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core",
+        "@opentelemetry/resources"
+      ],
+      "effects": [
+        "@opentelemetry/exporter-zipkin",
+        "@opentelemetry/sdk-node"
+      ],
+      "range": "<=2.7.1",
+      "nodes": [
+        "node_modules/@opentelemetry/sdk-trace-base",
+        "node_modules/@opentelemetry/sdk-trace-node/node_modules/@opentelemetry/sdk-trace-base"
+      ],
+      "fixAvailable": true
+    },
+    "@opentelemetry/sdk-trace-node": {
+      "name": "@opentelemetry/sdk-trace-node",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@opentelemetry/core",
+        "@opentelemetry/sdk-trace-base"
+      ],
+      "effects": [],
+      "range": "<=2.7.1",
+      "nodes": [
+        "node_modules/@opentelemetry/sdk-node/node_modules/@opentelemetry/sdk-trace-node",
+        "node_modules/@opentelemetry/sdk-trace-node"
+      ],
+      "fixAvailable": true
+    },
+    "@remix-run/router": {
+      "name": "@remix-run/router",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1136293,
+          "name": "@remix-run/router",
+          "dependency": "@remix-run/router",
+          "title": "React Router's same-origin redirect with path starting // causes open redirect via protocol-relative URL reinterpretation",
+          "url": "https://github.com/advisories/GHSA-2j2x-hqr9-3h42",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-601"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=1.3.0 <1.23.3"
+        }
+      ],
+      "effects": [
+        "react-router",
+        "react-router-dom"
+      ],
+      "range": "1.3.0 - 1.23.2",
+      "nodes": [
+        "node_modules/@remix-run/router"
+      ],
+      "fixAvailable": false
+    },
+    "@rushstack/node-core-library": {
+      "name": "@rushstack/node-core-library",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "ajv"
+      ],
+      "effects": [
+        "@rushstack/terminal"
+      ],
+      "range": "5.0.0 - 5.20.2",
+      "nodes": [
+        "node_modules/@rushstack/node-core-library"
+      ],
+      "fixAvailable": true
+    },
+    "@rushstack/terminal": {
+      "name": "@rushstack/terminal",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@rushstack/node-core-library"
+      ],
+      "effects": [
+        "@rushstack/ts-command-line"
+      ],
+      "range": "0.11.1 - 0.22.2",
+      "nodes": [
+        "node_modules/@rushstack/terminal"
+      ],
+      "fixAvailable": true
+    },
+    "@rushstack/ts-command-line": {
+      "name": "@rushstack/ts-command-line",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@rushstack/terminal"
+      ],
+      "effects": [],
+      "range": "4.21.1 - 5.3.2",
+      "nodes": [
+        "node_modules/@rushstack/ts-command-line"
+      ],
+      "fixAvailable": true
+    },
+    "ajv": {
+      "name": "ajv",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1113715,
+          "name": "ajv",
+          "dependency": "ajv",
+          "title": "ajv has ReDoS when using `$data` option",
+          "url": "https://github.com/advisories/GHSA-2g4f-4pwh-qvx6",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-400",
+            "CWE-1333"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=7.0.0-alpha.0 <8.18.0"
+        }
+      ],
+      "effects": [
+        "@rushstack/node-core-library"
+      ],
+      "range": "7.0.0-alpha.0 - 8.17.1",
+      "nodes": [
+        "node_modules/ajv"
+      ],
+      "fixAvailable": true
+    },
+    "axios": {
+      "name": "axios",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1116673,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios has a NO_PROXY Hostname Normalization Bypass that Leads to SSRF",
+          "url": "https://github.com/advisories/GHSA-3p68-rc4w-qgx5",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-441",
+            "CWE-918"
+          ],
+          "cvss": {
+            "score": 4.8,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:N"
+          },
+          "range": ">=1.0.0 <1.15.0"
+        },
+        {
+          "source": 1117574,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios: Authentication Bypass via Prototype Pollution Gadget in `validateStatus` Merge Strategy",
+          "url": "https://github.com/advisories/GHSA-w9j2-pvgh-6h63",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-287",
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 4.8,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:N"
+          },
+          "range": ">=1.0.0 <1.15.1"
+        },
+        {
+          "source": 1117576,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios: Incomplete Fix for CVE-2025-62718 — NO_PROXY Protection Bypassed via RFC 1122 Loopback Subnet (127.0.0.0/8) in Axios 1.15.0",
+          "url": "https://github.com/advisories/GHSA-pmwg-cvhr-8vh7",
+          "severity": "high",
+          "cwe": [
+            "CWE-183",
+            "CWE-441",
+            "CWE-918"
+          ],
+          "cvss": {
+            "score": 7.2,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:L/I:L/A:N"
+          },
+          "range": ">=1.0.0 <1.15.1"
+        },
+        {
+          "source": 1117577,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios: Invisible JSON Response Tampering via Prototype Pollution Gadget in `parseReviver`",
+          "url": "https://github.com/advisories/GHSA-3w6x-2g7m-8v23",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-915",
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 6.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:H/A:N"
+          },
+          "range": ">=1.0.0 <1.15.2"
+        },
+        {
+          "source": 1117580,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios: Null Byte Injection via Reverse-Encoding in AxiosURLSearchParams",
+          "url": "https://github.com/advisories/GHSA-xhjh-pmcv-23jw",
+          "severity": "low",
+          "cwe": [
+            "CWE-116",
+            "CWE-626"
+          ],
+          "cvss": {
+            "score": 3.7,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N"
+          },
+          "range": ">=1.0.0 <1.15.1"
+        },
+        {
+          "source": 1117581,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios: CRLF Injection in multipart/form-data body via unsanitized blob.type in formDataToStream",
+          "url": "https://github.com/advisories/GHSA-445q-vr5w-6q77",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-93"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N"
+          },
+          "range": ">=1.0.0 <1.15.1"
+        },
+        {
+          "source": 1117583,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios: no_proxy bypass via IP alias allows SSRF",
+          "url": "https://github.com/advisories/GHSA-m7pr-hjqh-92cm",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-918"
+          ],
+          "cvss": {
+            "score": 6.8,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:N/A:N"
+          },
+          "range": ">=1.0.0 <1.15.1"
+        },
+        {
+          "source": 1117587,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios' HTTP adapter-streamed uploads bypass maxBodyLength when maxRedirects: 0",
+          "url": "https://github.com/advisories/GHSA-5c9x-8gcm-mpgx",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": ">=1.0.0 <1.15.1"
+        },
+        {
+          "source": 1117589,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios: HTTP adapter streamed responses bypass maxContentLength",
+          "url": "https://github.com/advisories/GHSA-vf2m-468p-8v99",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": ">=1.0.0 <1.15.1"
+        },
+        {
+          "source": 1117591,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios: Prototype Pollution Gadgets - Response Tampering, Data Exfiltration, and Request Hijacking",
+          "url": "https://github.com/advisories/GHSA-pf86-5x62-jrwf",
+          "severity": "high",
+          "cwe": [
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 7.4,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N"
+          },
+          "range": ">=1.0.0 <1.15.1"
+        },
+        {
+          "source": 1117593,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios: Header Injection via Prototype Pollution",
+          "url": "https://github.com/advisories/GHSA-6chq-wfr3-2hj9",
+          "severity": "high",
+          "cwe": [
+            "CWE-113",
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 7.4,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N"
+          },
+          "range": ">=1.0.0 <1.15.1"
+        },
+        {
+          "source": 1117595,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios: XSRF Token Cross-Origin Leakage via Prototype Pollution Gadget in `withXSRFToken` Boolean Coercion",
+          "url": "https://github.com/advisories/GHSA-xx6v-rp6x-q39c",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-183",
+            "CWE-201"
+          ],
+          "cvss": {
+            "score": 5.4,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N"
+          },
+          "range": ">=1.0.0 <1.15.1"
+        },
+        {
+          "source": 1117858,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios is Vulnerable to Denial of Service via __proto__ Key in mergeConfig",
+          "url": "https://github.com/advisories/GHSA-43fc-jf86-j433",
+          "severity": "high",
+          "cwe": [
+            "CWE-754",
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=1.0.0 <=1.13.4"
+        },
+        {
+          "source": 1118607,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios has prototype pollution read-side gadgets in HTTP adapter that allow credential injection and request hijacking",
+          "url": "https://github.com/advisories/GHSA-q8qp-cvcw-x6jj",
+          "severity": "high",
+          "cwe": [
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 7.4,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N"
+          },
+          "range": ">=1.0.0 <1.15.2"
+        },
+        {
+          "source": 1119404,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios has Unrestricted Cloud Metadata Exfiltration via Header Injection Chain",
+          "url": "https://github.com/advisories/GHSA-fvcv-3m26-pcqx",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-113",
+            "CWE-444",
+            "CWE-918"
+          ],
+          "cvss": {
+            "score": 4.8,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:N"
+          },
+          "range": ">=1.0.0 <1.15.0"
+        },
+        {
+          "source": 1120125,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios: unbounded recursion in toFormData causes DoS via deeply nested request data",
+          "url": "https://github.com/advisories/GHSA-62hf-57xw-28j9",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-674"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=1.0.0 <1.15.1"
+        },
+        {
+          "source": 1120547,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios: Regular Expression Denial of Service (ReDoS) via Cookie Name Injection",
+          "url": "https://github.com/advisories/GHSA-hfxv-24rg-xrqf",
+          "severity": "high",
+          "cwe": [
+            "CWE-400",
+            "CWE-1333"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=1.0.0 <1.16.0"
+        },
+        {
+          "source": 1120643,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Allocation of Resources Without Limits or Throttling in Axios",
+          "url": "https://github.com/advisories/GHSA-777c-7fjr-54vf",
+          "severity": "high",
+          "cwe": [
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=1.7.0 <1.16.0"
+        },
+        {
+          "source": 1120645,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios: Proxy-Authorization Credential Leak to Origin Server Across HTTP-to-HTTPS Redirect in Axios Node.js HTTP Adapter",
+          "url": "https://github.com/advisories/GHSA-p92q-9vqr-4j8v",
+          "severity": "high",
+          "cwe": [
+            "CWE-201"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=1.0.0 <1.16.0"
+        },
+        {
+          "source": 1120647,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios: Proxy-Authorization header leaks to redirect target when proxy is re-evaluated to direct connection",
+          "url": "https://github.com/advisories/GHSA-j5f8-grm9-p9fc",
+          "severity": "high",
+          "cwe": [
+            "CWE-200"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+          },
+          "range": ">=1.0.0 <1.16.0"
+        },
+        {
+          "source": 1120649,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "axios Vulnerable to Credential Theft and Response Hijacking via Prototype Pollution Gadget in Config Merge",
+          "url": "https://github.com/advisories/GHSA-3g43-6gmg-66jw",
+          "severity": "high",
+          "cwe": [
+            "CWE-94",
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 7,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:L/A:L"
+          },
+          "range": ">=1.0.0 <1.15.2"
+        },
+        {
+          "source": 1120650,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "axios Vulnerable to Full Man-in-the-Middle via Prototype Pollution Gadget in `config.proxy`",
+          "url": "https://github.com/advisories/GHSA-35jp-ww65-95wh",
+          "severity": "high",
+          "cwe": [
+            "CWE-441",
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 8.7,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:H/A:N"
+          },
+          "range": ">=1.0.0 <1.16.0"
+        },
+        {
+          "source": 1120652,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "axios has DoS & Header Injection via Prototype Pollution Read-Side Gadgets in axios merge functions",
+          "url": "https://github.com/advisories/GHSA-898c-q2cr-xwhg",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 4.8,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:L"
+          },
+          "range": ">=1.0.0 <1.16.0"
+        },
+        {
+          "source": 1147949,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios: Prototype pollution gadgets can alter axios request construction",
+          "url": "https://github.com/advisories/GHSA-mmx7-hfxf-jppx",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=1.0.0 <1.18.0"
+        },
+        {
+          "source": 1147950,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios: Deep formToJSON Key Recursion Can Cause Denial of Service",
+          "url": "https://github.com/advisories/GHSA-pmv8-rq9r-6j72",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-400",
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=1.0.0 <1.18.0"
+        },
+        {
+          "source": 1153175,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios: HTTP/2 streamed uploads bypass `maxBodyLength`",
+          "url": "https://github.com/advisories/GHSA-mwf2-3pr3-8698",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-400"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=1.13.0 <1.18.0"
+        },
+        {
+          "source": 1153180,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios: Nested axios option objects can consume polluted prototype values",
+          "url": "https://github.com/advisories/GHSA-7q8q-rj6j-mhjq",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=1.0.0 <1.18.0"
+        },
+        {
+          "source": 1153182,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios: Fetch adapter `ReadableStream` uploads bypass `maxBodyLength`",
+          "url": "https://github.com/advisories/GHSA-jqh4-m9w3-8hp9",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=1.7.0 <1.18.0"
+        },
+        {
+          "source": 1153185,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios: Excessive recursion in formDataToJSON can cause denial of service",
+          "url": "https://github.com/advisories/GHSA-42h9-826w-cgv3",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-400",
+            "CWE-674"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=1.0.0 <1.18.0"
+        }
+      ],
+      "effects": [],
+      "range": "1.0.0 - 1.17.0",
+      "nodes": [
+        "node_modules/axios"
+      ],
+      "fixAvailable": true
+    },
+    "body-parser": {
+      "name": "body-parser",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1123977,
+          "name": "body-parser",
+          "dependency": "body-parser",
+          "title": "body-parser vulnerable to denial of service when invalid limit value silently disables size enforcement",
+          "url": "https://github.com/advisories/GHSA-v422-hmwv-36x6",
+          "severity": "low",
+          "cwe": [
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 3.7,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": "<1.20.6"
+        },
+        "qs"
+      ],
+      "effects": [],
+      "range": "<=1.20.6 || 2.0.0-beta.1 - 2.0.2",
+      "nodes": [
+        "node_modules/body-parser"
+      ],
+      "fixAvailable": true
+    },
+    "brace-expansion": {
+      "name": "brace-expansion",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1115540,
+          "name": "brace-expansion",
+          "dependency": "brace-expansion",
+          "title": "brace-expansion: Zero-step sequence causes process hang and memory exhaustion",
+          "url": "https://github.com/advisories/GHSA-f886-m6hf-6m8v",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-400"
+          ],
+          "cvss": {
+            "score": 6.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H"
+          },
+          "range": "<1.1.13"
+        },
+        {
+          "source": 1120311,
+          "name": "brace-expansion",
+          "dependency": "brace-expansion",
+          "title": "brace-expansion: Large numeric range defeats documented `max` DoS protection",
+          "url": "https://github.com/advisories/GHSA-jxxr-4gwj-5jf2",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-400"
+          ],
+          "cvss": {
+            "score": 6.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=5.0.0 <5.0.6"
+        },
+        {
+          "source": 1123897,
+          "name": "brace-expansion",
+          "dependency": "brace-expansion",
+          "title": "brace-expansion: DoS via exponential-time expansion of consecutive non-expanding {} groups",
+          "url": "https://github.com/advisories/GHSA-3jxr-9vmj-r5cp",
+          "severity": "high",
+          "cwe": [
+            "CWE-400",
+            "CWE-407"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": "<1.1.16"
+        },
+        {
+          "source": 1123898,
+          "name": "brace-expansion",
+          "dependency": "brace-expansion",
+          "title": "brace-expansion: DoS via exponential-time expansion of consecutive non-expanding {} groups",
+          "url": "https://github.com/advisories/GHSA-3jxr-9vmj-r5cp",
+          "severity": "high",
+          "cwe": [
+            "CWE-400",
+            "CWE-407"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": ">=3.0.0 <5.0.7"
+        },
+        {
+          "source": 1130588,
+          "name": "brace-expansion",
+          "dependency": "brace-expansion",
+          "title": "brace-expansion: DoS via unbounded expansion length causing an out-of-memory process crash",
+          "url": "https://github.com/advisories/GHSA-mh99-v99m-4gvg",
+          "severity": "high",
+          "cwe": [
+            "CWE-400",
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<1.1.17"
+        },
+        {
+          "source": 1130591,
+          "name": "brace-expansion",
+          "dependency": "brace-expansion",
+          "title": "brace-expansion: DoS via unbounded expansion length causing an out-of-memory process crash",
+          "url": "https://github.com/advisories/GHSA-mh99-v99m-4gvg",
+          "severity": "high",
+          "cwe": [
+            "CWE-400",
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=4.0.0 <5.0.8"
+        },
+        {
+          "source": 1130734,
+          "name": "brace-expansion",
+          "dependency": "brace-expansion",
+          "title": "brace-expansion: DoS via unbounded intermediate arrays, bypassing the CVE-2026-14257 mitigation",
+          "url": "https://github.com/advisories/GHSA-rgw5-rvv9-x895",
+          "severity": "high",
+          "cwe": [
+            "CWE-400",
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=4.0.0 <5.0.9"
+        },
+        {
+          "source": 1130737,
+          "name": "brace-expansion",
+          "dependency": "brace-expansion",
+          "title": "brace-expansion: DoS via unbounded intermediate arrays, bypassing the CVE-2026-14257 mitigation",
+          "url": "https://github.com/advisories/GHSA-rgw5-rvv9-x895",
+          "severity": "high",
+          "cwe": [
+            "CWE-400",
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<1.1.18"
+        }
+      ],
+      "effects": [],
+      "range": "<=1.1.17 || 3.0.0 - 5.0.8",
+      "nodes": [
+        "node_modules/@medusajs/admin-bundler/node_modules/brace-expansion",
+        "node_modules/brace-expansion"
+      ],
+      "fixAvailable": true
+    },
+    "browserslist": {
+      "name": "browserslist",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1153171,
+          "name": "browserslist",
+          "dependency": "browserslist",
+          "title": "Browserslist: Unbounded memory growth (no cache eviction) via distinct query results, leading to eventual OOM",
+          "url": "https://github.com/advisories/GHSA-c83g-rgw3-j3cx",
+          "severity": "high",
+          "cwe": [
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<=4.28.6"
+        },
+        {
+          "source": 1153172,
+          "name": "browserslist",
+          "dependency": "browserslist",
+          "title": "Browserslist: Uncaught crash / prototype write via untrusted browserslist-stats.json custom stats (normalizeStats)",
+          "url": "https://github.com/advisories/GHSA-73wf-gq98-2v4g",
+          "severity": "high",
+          "cwe": [
+            "CWE-248",
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<=4.28.6"
+        }
+      ],
+      "effects": [],
+      "range": "<=4.28.6",
+      "nodes": [
+        "node_modules/browserslist"
+      ],
+      "fixAvailable": true
+    },
+    "bullmq": {
+      "name": "bullmq",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "uuid"
+      ],
+      "effects": [
+        "@medusajs/event-bus-redis",
+        "@medusajs/workflow-engine-redis"
+      ],
+      "range": "1.0.1 - 5.58.5 || 5.66.1 - 5.76.1",
+      "nodes": [
+        "node_modules/bullmq"
+      ],
+      "fixAvailable": false
+    },
+    "esbuild": {
+      "name": "esbuild",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1102341,
+          "name": "esbuild",
+          "dependency": "esbuild",
+          "title": "esbuild enables any website to send any requests to the development server and read the response",
+          "url": "https://github.com/advisories/GHSA-67mh-4wv8-2f99",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-346"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N"
+          },
+          "range": "<=0.24.2"
+        }
+      ],
+      "effects": [
+        "vite"
+      ],
+      "range": "<=0.24.2",
+      "nodes": [
+        "node_modules/esbuild"
+      ],
+      "fixAvailable": false
+    },
+    "express": {
+      "name": "express",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "qs"
+      ],
+      "effects": [
+        "@medusajs/admin-bundler",
+        "@medusajs/cli",
+        "@medusajs/framework",
+        "@medusajs/medusa",
+        "@medusajs/test-utils",
+        "@medusajs/utils"
+      ],
+      "range": "4.10.0 - 5.0.1",
+      "nodes": [
+        "node_modules/express"
+      ],
+      "fixAvailable": false
+    },
+    "follow-redirects": {
+      "name": "follow-redirects",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1116560,
+          "name": "follow-redirects",
+          "dependency": "follow-redirects",
+          "title": "follow-redirects leaks Custom Authentication Headers to Cross-Domain Redirect Targets",
+          "url": "https://github.com/advisories/GHSA-r4q5-vmmm-2653",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-200"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<=1.15.11"
+        }
+      ],
+      "effects": [],
+      "range": "<=1.15.11",
+      "nodes": [
+        "node_modules/follow-redirects"
+      ],
+      "fixAvailable": true
+    },
+    "form-data": {
+      "name": "form-data",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1120743,
+          "name": "form-data",
+          "dependency": "form-data",
+          "title": "form-data: CRLF injection in form-data via unescaped multipart field names and filenames",
+          "url": "https://github.com/advisories/GHSA-hmw2-7cc7-3qxx",
+          "severity": "high",
+          "cwe": [
+            "CWE-93"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N"
+          },
+          "range": ">=4.0.0 <4.0.6"
+        }
+      ],
+      "effects": [],
+      "range": "4.0.0 - 4.0.5",
+      "nodes": [
+        "node_modules/form-data"
+      ],
+      "fixAvailable": true
+    },
+    "i18next-http-backend": {
+      "name": "i18next-http-backend",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1117949,
+          "name": "i18next-http-backend",
+          "dependency": "i18next-http-backend",
+          "title": " i18next-http-backend has Path Traversal & URL Injection via Unsanitised lng/ns",
+          "url": "https://github.com/advisories/GHSA-q89c-q3h5-w34g",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-22",
+            "CWE-74"
+          ],
+          "cvss": {
+            "score": 6.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N"
+          },
+          "range": "<3.0.5"
+        }
+      ],
+      "effects": [
+        "@medusajs/dashboard"
+      ],
+      "range": "<3.0.5",
+      "nodes": [
+        "node_modules/i18next-http-backend"
+      ],
+      "fixAvailable": false
+    },
+    "immutable": {
+      "name": "immutable",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1124007,
+          "name": "immutable",
+          "dependency": "immutable",
+          "title": "Immutable.js `List` 32-bit trie overflow → unrecoverable DoS",
+          "url": "https://github.com/advisories/GHSA-v56q-mh7h-f735",
+          "severity": "high",
+          "cwe": [
+            "CWE-190",
+            "CWE-400",
+            "CWE-835",
+            "CWE-1284"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=5.0.0-beta.1 <5.1.8"
+        },
+        {
+          "source": 1164790,
+          "name": "immutable",
+          "dependency": "immutable",
+          "title": "Immutable: Hash-collision algorithmic complexity denial of service in Immutable.Map/Set",
+          "url": "https://github.com/advisories/GHSA-xvcm-6775-5m9r",
+          "severity": "high",
+          "cwe": [
+            "CWE-400",
+            "CWE-407"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=5.0.0-beta.1 <5.1.8"
+        }
+      ],
+      "effects": [],
+      "range": "5.0.0-beta.1 - 5.1.7",
+      "nodes": [
+        "node_modules/immutable"
+      ],
+      "fixAvailable": true
+    },
+    "js-yaml": {
+      "name": "js-yaml",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1121859,
+          "name": "js-yaml",
+          "dependency": "js-yaml",
+          "title": "JS-YAML: Quadratic-complexity DoS in merge key handling via repeated aliases",
+          "url": "https://github.com/advisories/GHSA-h67p-54hq-rp68",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-407"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": "<3.15.0"
+        },
+        {
+          "source": 1123912,
+          "name": "js-yaml",
+          "dependency": "js-yaml",
+          "title": "js-yaml: YAML merge-key chains can force quadratic CPU consumption",
+          "url": "https://github.com/advisories/GHSA-52cp-r559-cp3m",
+          "severity": "high",
+          "cwe": [
+            "CWE-400",
+            "CWE-407"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=3.0.0 <3.15.0"
+        },
+        {
+          "source": 1138114,
+          "name": "js-yaml",
+          "dependency": "js-yaml",
+          "title": "JS-YAML: Quadratic CPU consumption in !!omap resolution (3.x and 4.x) — CVE-2026-59870 fix not backported",
+          "url": "https://github.com/advisories/GHSA-5p4m-2wfm-xmqj",
+          "severity": "high",
+          "cwe": [
+            "CWE-407"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=3.0.0 <3.15.1"
+        }
+      ],
+      "effects": [],
+      "range": "<=3.15.0",
+      "nodes": [
+        "node_modules/js-yaml"
+      ],
+      "fixAvailable": true
+    },
+    "json-2-csv": {
+      "name": "json-2-csv",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1122166,
+          "name": "json-2-csv",
+          "dependency": "json-2-csv",
+          "title": "json-2-csv vulnerable to CSV Injection via the preventCsvInjection optio",
+          "url": "https://github.com/advisories/GHSA-g27c-q7cp-mhx6",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-1236"
+          ],
+          "cvss": {
+            "score": 6.8,
+            "vectorString": "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:N"
+          },
+          "range": ">=3.15.0 <5.5.11"
+        }
+      ],
+      "effects": [],
+      "range": "3.15.0 - 5.5.10",
+      "nodes": [
+        "node_modules/json-2-csv"
+      ],
+      "fixAvailable": true
+    },
+    "jws": {
+      "name": "jws",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1111244,
+          "name": "jws",
+          "dependency": "jws",
+          "title": "auth0/node-jws Improperly Verifies HMAC Signature",
+          "url": "https://github.com/advisories/GHSA-869p-cjfg-cm3x",
+          "severity": "high",
+          "cwe": [
+            "CWE-347"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N"
+          },
+          "range": "<3.2.3"
+        }
+      ],
+      "effects": [],
+      "range": "<3.2.3",
+      "nodes": [
+        "node_modules/jws"
+      ],
+      "fixAvailable": true
+    },
+    "lodash": {
+      "name": "lodash",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1115806,
+          "name": "lodash",
+          "dependency": "lodash",
+          "title": "lodash vulnerable to Code Injection via `_.template` imports key names",
+          "url": "https://github.com/advisories/GHSA-r5fr-rjxr-66jc",
+          "severity": "high",
+          "cwe": [
+            "CWE-94"
+          ],
+          "cvss": {
+            "score": 8.1,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H"
+          },
+          "range": ">=4.0.0 <=4.17.23"
+        },
+        {
+          "source": 1115810,
+          "name": "lodash",
+          "dependency": "lodash",
+          "title": "lodash vulnerable to Prototype Pollution via array path bypass in `_.unset` and `_.omit`",
+          "url": "https://github.com/advisories/GHSA-f23m-r3pf-42rh",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 6.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:L"
+          },
+          "range": "<=4.17.23"
+        },
+        {
+          "source": 1120370,
+          "name": "lodash",
+          "dependency": "lodash",
+          "title": "Lodash has Prototype Pollution Vulnerability in `_.unset` and `_.omit` functions",
+          "url": "https://github.com/advisories/GHSA-xxjr-mmjv-4gpg",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 6.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:L"
+          },
+          "range": ">=4.0.0 <=4.17.22"
+        }
+      ],
+      "effects": [],
+      "range": "<=4.17.23",
+      "nodes": [
+        "node_modules/lodash"
+      ],
+      "fixAvailable": true
+    },
+    "minimatch": {
+      "name": "minimatch",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1113459,
+          "name": "minimatch",
+          "dependency": "minimatch",
+          "title": "minimatch has a ReDoS via repeated wildcards with non-matching literal in pattern",
+          "url": "https://github.com/advisories/GHSA-3ppc-4f35-3m26",
+          "severity": "high",
+          "cwe": [
+            "CWE-1333"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<3.1.3"
+        },
+        {
+          "source": 1113466,
+          "name": "minimatch",
+          "dependency": "minimatch",
+          "title": "minimatch has a ReDoS via repeated wildcards with non-matching literal in pattern",
+          "url": "https://github.com/advisories/GHSA-3ppc-4f35-3m26",
+          "severity": "high",
+          "cwe": [
+            "CWE-1333"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=10.0.0 <10.2.1"
+        },
+        {
+          "source": 1113538,
+          "name": "minimatch",
+          "dependency": "minimatch",
+          "title": "minimatch has ReDoS: matchOne() combinatorial backtracking via multiple non-adjacent GLOBSTAR segments",
+          "url": "https://github.com/advisories/GHSA-7r86-cg39-jmmj",
+          "severity": "high",
+          "cwe": [
+            "CWE-407"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<3.1.3"
+        },
+        {
+          "source": 1113545,
+          "name": "minimatch",
+          "dependency": "minimatch",
+          "title": "minimatch has ReDoS: matchOne() combinatorial backtracking via multiple non-adjacent GLOBSTAR segments",
+          "url": "https://github.com/advisories/GHSA-7r86-cg39-jmmj",
+          "severity": "high",
+          "cwe": [
+            "CWE-407"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=10.0.0 <10.2.3"
+        },
+        {
+          "source": 1113546,
+          "name": "minimatch",
+          "dependency": "minimatch",
+          "title": "minimatch ReDoS: nested *() extglobs generate catastrophically backtracking regular expressions",
+          "url": "https://github.com/advisories/GHSA-23c5-xmqv-rm74",
+          "severity": "high",
+          "cwe": [
+            "CWE-1333"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<3.1.4"
+        },
+        {
+          "source": 1113553,
+          "name": "minimatch",
+          "dependency": "minimatch",
+          "title": "minimatch ReDoS: nested *() extglobs generate catastrophically backtracking regular expressions",
+          "url": "https://github.com/advisories/GHSA-23c5-xmqv-rm74",
+          "severity": "high",
+          "cwe": [
+            "CWE-1333"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=10.0.0 <10.2.3"
+        }
+      ],
+      "effects": [],
+      "range": "<=3.1.3 || 10.0.0 - 10.2.2",
+      "nodes": [
+        "node_modules/@medusajs/cli/node_modules/minimatch",
+        "node_modules/@medusajs/framework/node_modules/minimatch",
+        "node_modules/minimatch"
+      ],
+      "fixAvailable": true
+    },
+    "morgan": {
+      "name": "morgan",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1122902,
+          "name": "morgan",
+          "dependency": "morgan",
+          "title": "morgan vulnerable to Log Forging via unneutralized control characters in :remote-user",
+          "url": "https://github.com/advisories/GHSA-4vj7-5mj6-jm8m",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-117"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N"
+          },
+          "range": ">=1.2.0 <=1.10.1"
+        }
+      ],
+      "effects": [],
+      "range": "1.2.0 - 1.10.1",
+      "nodes": [
+        "node_modules/morgan"
+      ],
+      "fixAvailable": true
+    },
+    "multer": {
+      "name": "multer",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1113635,
+          "name": "multer",
+          "dependency": "multer",
+          "title": "Multer vulnerable to Denial of Service via incomplete cleanup",
+          "url": "https://github.com/advisories/GHSA-xf7r-hgr6-v32p",
+          "severity": "high",
+          "cwe": [
+            "CWE-459"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<2.1.0"
+        },
+        {
+          "source": 1113636,
+          "name": "multer",
+          "dependency": "multer",
+          "title": "Multer vulnerable to Denial of Service via resource exhaustion",
+          "url": "https://github.com/advisories/GHSA-v52c-386h-88mc",
+          "severity": "high",
+          "cwe": [
+            "CWE-772"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<2.1.0"
+        },
+        {
+          "source": 1113996,
+          "name": "multer",
+          "dependency": "multer",
+          "title": "Multer Vulnerable to Denial of Service via Uncontrolled Recursion",
+          "url": "https://github.com/advisories/GHSA-5528-5vmv-3xc2",
+          "severity": "high",
+          "cwe": [
+            "CWE-674"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<2.1.1"
+        },
+        {
+          "source": 1121089,
+          "name": "multer",
+          "dependency": "multer",
+          "title": "Multer vulnerable to Denial of Service via deeply nested field names",
+          "url": "https://github.com/advisories/GHSA-72gw-mp4g-v24j",
+          "severity": "high",
+          "cwe": [
+            "CWE-400"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=1.0.0 <2.2.0"
+        },
+        {
+          "source": 1121091,
+          "name": "multer",
+          "dependency": "multer",
+          "title": "Multer vulnerable to Denial of Service via incomplete cleanup of aborted uploads",
+          "url": "https://github.com/advisories/GHSA-3p4h-7m6x-2hcm",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-459"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": ">=2.0.0-alpha.1 <2.2.0"
+        }
+      ],
+      "effects": [],
+      "range": "<=2.1.1",
+      "nodes": [
+        "node_modules/multer"
+      ],
+      "fixAvailable": true
+    },
+    "nanoid": {
+      "name": "nanoid",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1138811,
+          "name": "nanoid",
+          "dependency": "nanoid",
+          "title": "nanoid: non-secure generators can loop indefinitely with negative size",
+          "url": "https://github.com/advisories/GHSA-28wg-ghj8-5hjv",
+          "severity": "high",
+          "cwe": [
+            "CWE-835"
+          ],
+          "cvss": {
+            "score": 5.9,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<3.3.16"
+        },
+        {
+          "source": 1139427,
+          "name": "nanoid",
+          "dependency": "nanoid",
+          "title": "nanoid: custom generators can loop indefinitely when size is zero",
+          "url": "https://github.com/advisories/GHSA-2v37-7h3g-55p8",
+          "severity": "high",
+          "cwe": [
+            "CWE-835"
+          ],
+          "cvss": {
+            "score": 5.9,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<3.3.18"
+        },
+        {
+          "source": 1153189,
+          "name": "nanoid",
+          "dependency": "nanoid",
+          "title": "nanoid: Integer Overflow or Wraparound",
+          "url": "https://github.com/advisories/GHSA-xwg4-73v4-xw9w",
+          "severity": "high",
+          "cwe": [
+            "CWE-190"
+          ],
+          "cvss": {
+            "score": 7.4,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N"
+          },
+          "range": "<3.3.12"
+        }
+      ],
+      "effects": [],
+      "range": "<=3.3.17",
+      "nodes": [
+        "node_modules/nanoid"
+      ],
+      "fixAvailable": true
+    },
+    "path-to-regexp": {
+      "name": "path-to-regexp",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1115527,
+          "name": "path-to-regexp",
+          "dependency": "path-to-regexp",
+          "title": "path-to-regexp vulnerable to Regular Expression Denial of Service via multiple route parameters",
+          "url": "https://github.com/advisories/GHSA-37ch-88jc-xwx2",
+          "severity": "high",
+          "cwe": [
+            "CWE-1333"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<0.1.13"
+        },
+        {
+          "source": 1115573,
+          "name": "path-to-regexp",
+          "dependency": "path-to-regexp",
+          "title": "path-to-regexp vulnerable to Denial of Service via sequential optional groups",
+          "url": "https://github.com/advisories/GHSA-j3q9-mxjg-w52f",
+          "severity": "high",
+          "cwe": [
+            "CWE-400",
+            "CWE-1333"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=8.0.0 <8.4.0"
+        },
+        {
+          "source": 1115582,
+          "name": "path-to-regexp",
+          "dependency": "path-to-regexp",
+          "title": "path-to-regexp vulnerable to Regular Expression Denial of Service via multiple wildcards",
+          "url": "https://github.com/advisories/GHSA-27v5-c462-wpq7",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-1333"
+          ],
+          "cvss": {
+            "score": 5.9,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=8.0.0 <8.4.0"
+        }
+      ],
+      "effects": [],
+      "range": "<=0.1.12 || 8.0.0 - 8.3.0",
+      "nodes": [
+        "node_modules/@medusajs/framework/node_modules/path-to-regexp",
+        "node_modules/path-to-regexp"
+      ],
+      "fixAvailable": true
+    },
+    "picomatch": {
+      "name": "picomatch",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1115549,
+          "name": "picomatch",
+          "dependency": "picomatch",
+          "title": "Picomatch: Method Injection in POSIX Character Classes causes incorrect Glob Matching",
+          "url": "https://github.com/advisories/GHSA-3v7f-55p6-f55p",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-1321"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N"
+          },
+          "range": "<2.3.2"
+        },
+        {
+          "source": 1115552,
+          "name": "picomatch",
+          "dependency": "picomatch",
+          "title": "Picomatch has a ReDoS vulnerability via extglob quantifiers",
+          "url": "https://github.com/advisories/GHSA-c2c7-rcm5-vvqj",
+          "severity": "high",
+          "cwe": [
+            "CWE-1333"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<2.3.2"
+        }
+      ],
+      "effects": [],
+      "range": "<=2.3.1",
+      "nodes": [
+        "node_modules/picomatch"
+      ],
+      "fixAvailable": true
+    },
+    "postcss": {
+      "name": "postcss",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1117015,
+          "name": "postcss",
+          "dependency": "postcss",
+          "title": "PostCSS has XSS via Unescaped </style> in its CSS Stringify Output",
+          "url": "https://github.com/advisories/GHSA-qx2v-qp2m-jg93",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-79"
+          ],
+          "cvss": {
+            "score": 6.1,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+          },
+          "range": "<8.5.10"
+        },
+        {
+          "source": 1124252,
+          "name": "postcss",
+          "dependency": "postcss",
+          "title": "PostCSS: Arbitrary file read and information disclosure via attacker-controlled sourceMappingURL in CSS comments",
+          "url": "https://github.com/advisories/GHSA-6g55-p6wh-862q",
+          "severity": "high",
+          "cwe": [
+            "CWE-22",
+            "CWE-200"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+          },
+          "range": "<=8.5.11"
+        },
+        {
+          "source": 1130709,
+          "name": "postcss",
+          "dependency": "postcss",
+          "title": "PostCSS: incomplete fix of GHSA-6g55-p6wh-862q — attacker-controlled sourceMappingURL reads arbitrary .map files when `from` is unset",
+          "url": "https://github.com/advisories/GHSA-fxqj-rqcc-2cmp",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-22",
+            "CWE-200"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<=8.5.22"
+        },
+        {
+          "source": 1139510,
+          "name": "postcss",
+          "dependency": "postcss",
+          "title": "PostCSS: Path Traversal in Previous Source Map Auto-Loading (sourceMappingURL) leads to Arbitrary .map File Disclosure",
+          "url": "https://github.com/advisories/GHSA-r28c-9q8g-f849",
+          "severity": "high",
+          "cwe": [
+            "CWE-22"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+          },
+          "range": "<=8.5.17"
+        }
+      ],
+      "effects": [],
+      "range": "<=8.5.22",
+      "nodes": [
+        "node_modules/postcss"
+      ],
+      "fixAvailable": true
+    },
+    "postcss-selector-parser": {
+      "name": "postcss-selector-parser",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1153170,
+          "name": "postcss-selector-parser",
+          "dependency": "postcss-selector-parser",
+          "title": "postcss-selector-parser allows denial of service through uncontrolled AST recursion",
+          "url": "https://github.com/advisories/GHSA-w9m9-85wc-3x92",
+          "severity": "low",
+          "cwe": [
+            "CWE-404"
+          ],
+          "cvss": {
+            "score": 4.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L"
+          },
+          "range": ">=6.1.0 <6.1.3"
+        }
+      ],
+      "effects": [],
+      "range": "6.1.0 - 6.1.2",
+      "nodes": [
+        "node_modules/postcss-selector-parser"
+      ],
+      "fixAvailable": true
+    },
+    "protobufjs": {
+      "name": "protobufjs",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1119378,
+          "name": "protobufjs",
+          "dependency": "protobufjs",
+          "title": "protobufjs: Denial of Service via unbounded recursive JSON descriptor expansion",
+          "url": "https://github.com/advisories/GHSA-jggg-4jg4-v7c6",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-674"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": "<=7.5.7"
+        },
+        {
+          "source": 1123488,
+          "name": "protobufjs",
+          "dependency": "protobufjs",
+          "title": "protobufjs: Denial of service through unbounded Any expansion during JSON conversion",
+          "url": "https://github.com/advisories/GHSA-wcpc-wj8m-hjx6",
+          "severity": "high",
+          "cwe": [
+            "CWE-674"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<=7.6.0"
+        },
+        {
+          "source": 1123492,
+          "name": "protobufjs",
+          "dependency": "protobufjs",
+          "title": "protobufjs : Schema-derived names can shadow runtime-significant properties",
+          "url": "https://github.com/advisories/GHSA-f38q-mgvj-vph7",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-674",
+            "CWE-754"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": "<=7.6.2"
+        },
+        {
+          "source": 1123964,
+          "name": "protobufjs",
+          "dependency": "protobufjs",
+          "title": "protobufjs: Denial of Service via infinite loop in .proto option parsing",
+          "url": "https://github.com/advisories/GHSA-j3f2-48v5-ccww",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-835"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": ">=7.5.0 <=7.6.4"
+        }
+      ],
+      "effects": [],
+      "range": "<=7.6.4",
+      "nodes": [
+        "node_modules/protobufjs"
+      ],
+      "fixAvailable": true
+    },
+    "qs": {
+      "name": "qs",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1113161,
+          "name": "qs",
+          "dependency": "qs",
+          "title": "qs's arrayLimit bypass in comma parsing allows denial of service",
+          "url": "https://github.com/advisories/GHSA-w7fw-mjwx-w883",
+          "severity": "low",
+          "cwe": [
+            "CWE-20"
+          ],
+          "cvss": {
+            "score": 3.7,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": ">=6.7.0 <=6.14.1"
+        },
+        {
+          "source": 1113719,
+          "name": "qs",
+          "dependency": "qs",
+          "title": "qs's arrayLimit bypass in its bracket notation allows DoS via memory exhaustion",
+          "url": "https://github.com/advisories/GHSA-6rw7-vpxm-498p",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-20"
+          ],
+          "cvss": {
+            "score": 3.7,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": "<6.14.1"
+        },
+        {
+          "source": 1119502,
+          "name": "qs",
+          "dependency": "qs",
+          "title": "qs has a remotely triggerable DoS: qs.stringify crashes with TypeError on null/undefined entries in comma-format arrays when encodeValuesOnly is set",
+          "url": "https://github.com/advisories/GHSA-q8mj-m7cp-5q26",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-476"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": ">=6.11.1 <=6.15.1"
+        },
+        {
+          "source": 1158507,
+          "name": "qs",
+          "dependency": "qs",
+          "title": "qs: Denial of Service via Attacker Controlled isBuffer",
+          "url": "https://github.com/advisories/GHSA-4mjr-xmp4-gh2g",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-248",
+            "CWE-703"
+          ],
+          "cvss": {
+            "score": 5.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": ">=2.2.5 <6.16.0"
+        }
+      ],
+      "effects": [
+        "body-parser",
+        "express"
+      ],
+      "range": "<=6.15.3",
+      "nodes": [
+        "node_modules/qs"
+      ],
+      "fixAvailable": false
+    },
+    "react-router": {
+      "name": "react-router",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@remix-run/router",
+        {
+          "source": 1124268,
+          "name": "react-router",
+          "dependency": "react-router",
+          "title": "React Router: Open redirect via backslash in <Link> and useNavigate (CVE-2025-68470 bypass)",
+          "url": "https://github.com/advisories/GHSA-wrjc-x8rr-h8h6",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-601"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=6.0.0 <7.18.0"
+        },
+        {
+          "source": 1124272,
+          "name": "react-router",
+          "dependency": "react-router",
+          "title": "React Router: Arbitrary Constructor Injection via deserializeErrors() in React Router SSR Hydration",
+          "url": "https://github.com/advisories/GHSA-337j-9hxr-rhxg",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-470"
+          ],
+          "cvss": {
+            "score": 6.1,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+          },
+          "range": ">=6.4.0 <7.18.0"
+        },
+        {
+          "source": 1136303,
+          "name": "react-router",
+          "dependency": "react-router",
+          "title": "React Router's same-origin redirect with path starting // causes open redirect via protocol-relative URL reinterpretation",
+          "url": "https://github.com/advisories/GHSA-2j2x-hqr9-3h42",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-601"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=6.7.0 <6.30.4"
+        }
+      ],
+      "effects": [
+        "react-router-dom"
+      ],
+      "range": "6.0.0 - 7.17.0",
+      "nodes": [
+        "node_modules/react-router"
+      ],
+      "fixAvailable": false
+    },
+    "react-router-dom": {
+      "name": "react-router-dom",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "@remix-run/router",
+        {
+          "source": 1124270,
+          "name": "react-router-dom",
+          "dependency": "react-router-dom",
+          "title": "React Router: Open redirect leading to XSS",
+          "url": "https://github.com/advisories/GHSA-jjmj-jmhj-qwj2",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-601"
+          ],
+          "cvss": {
+            "score": 6.9,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:H/I:L/A:N"
+          },
+          "range": ">=6.30.2 <=6.30.4"
+        },
+        "react-router"
+      ],
+      "effects": [
+        "@medusajs/dashboard",
+        "@medusajs/draft-order"
+      ],
+      "range": "6.0.0-alpha.0 - 7.17.0",
+      "nodes": [
+        "node_modules/react-router-dom"
+      ],
+      "fixAvailable": false
+    },
+    "rollup": {
+      "name": "rollup",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1113515,
+          "name": "rollup",
+          "dependency": "rollup",
+          "title": "Rollup 4 has Arbitrary File Write via Path Traversal",
+          "url": "https://github.com/advisories/GHSA-mw96-cpmx-2vgc",
+          "severity": "high",
+          "cwe": [
+            "CWE-22"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=4.0.0 <4.59.0"
+        }
+      ],
+      "effects": [],
+      "range": "4.0.0 - 4.58.0",
+      "nodes": [
+        "node_modules/rollup"
+      ],
+      "fixAvailable": true
+    },
+    "uuid": {
+      "name": "uuid",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1119441,
+          "name": "uuid",
+          "dependency": "uuid",
+          "title": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+          "url": "https://github.com/advisories/GHSA-w5hq-g745-h8pq",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-787",
+            "CWE-1285"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N"
+          },
+          "range": "<11.1.1"
+        }
+      ],
+      "effects": [
+        "@medusajs/medusa",
+        "@medusajs/telemetry",
+        "bullmq"
+      ],
+      "range": "<11.1.1",
+      "nodes": [
+        "node_modules/uuid"
+      ],
+      "fixAvailable": false
+    },
+    "vite": {
+      "name": "vite",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 1116229,
+          "name": "vite",
+          "dependency": "vite",
+          "title": "Vite Vulnerable to Path Traversal in Optimized Deps `.map` Handling",
+          "url": "https://github.com/advisories/GHSA-4w7w-66w2-5vf9",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-22",
+            "CWE-200"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<=6.4.1"
+        },
+        {
+          "source": 1120784,
+          "name": "vite",
+          "dependency": "vite",
+          "title": "launch-editor: NTLMv2 hash disclosure via UNC path handling on Windows",
+          "url": "https://github.com/advisories/GHSA-v6wh-96g9-6wx3",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-73",
+            "CWE-522"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<=6.4.2"
+        },
+        {
+          "source": 1123525,
+          "name": "vite",
+          "dependency": "vite",
+          "title": "vite: `server.fs.deny` bypass on Windows alternate paths",
+          "url": "https://github.com/advisories/GHSA-fx2h-pf6j-xcff",
+          "severity": "high",
+          "cwe": [
+            "CWE-22",
+            "CWE-200"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+          },
+          "range": "<=6.4.2"
+        },
+        "esbuild"
+      ],
+      "effects": [
+        "@medusajs/admin-bundler",
+        "@medusajs/admin-vite-plugin",
+        "@medusajs/types"
+      ],
+      "range": "<=6.4.2",
+      "nodes": [
+        "node_modules/vite"
+      ],
+      "fixAvailable": false
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 2,
+      "moderate": 42,
+      "high": 85,
+      "critical": 1,
+      "total": 130
+    },
+    "dependencies": {
+      "prod": 1170,
+      "dev": 197,
+      "optional": 66,
+      "peer": 3,
+      "peerOptional": 0,
+      "total": 1435
+    }
+  }
+}
