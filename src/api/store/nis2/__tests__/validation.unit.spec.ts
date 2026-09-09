@@ -137,6 +137,32 @@ describe('NIS2-CAMPAIGN-CONTRACT 1.0.0 request validation', () => {
   });
 
   it.each([
+    'PRIVATE_ENTERPRISE',
+    'EDUCATION',
+    'RESEARCH_ORGANIZATION',
+    'OTHER',
+    'UNKNOWN',
+  ])('rejects PUBLIC_ADMINISTRATION for non-public organization type %s', (organizationType) => {
+    expect(() => parseAssessmentBody({
+      answers: { ...answers, organizationType, sector: 'PUBLIC_ADMINISTRATION' },
+      infrastructureNeeds: [],
+    })).toThrow(expect.objectContaining({
+      code: 'VALIDATION_FAILED',
+      field: 'answers.sector',
+    }));
+  });
+
+  it.each(['STATE_ADMINISTRATION', 'MUNICIPALITY'])(
+    'accepts PUBLIC_ADMINISTRATION for public-body organization type %s',
+    (organizationType) => {
+      expect(parseAssessmentBody({
+        answers: { ...answers, organizationType, sector: 'PUBLIC_ADMINISTRATION' },
+        infrastructureNeeds: [],
+      }).answers).toEqual(expect.objectContaining({ organizationType, sector: 'PUBLIC_ADMINISTRATION' }));
+    },
+  );
+
+  it.each([
     [{ ...leadBody, privacyConsent: false }, 'CONSENT_REQUIRED', 'privacyConsent'],
     [{ ...leadBody, privacyNoticeVersion: 'nis2-privacy-2026-09-04' }, 'VALIDATION_FAILED', 'privacyNoticeVersion'],
     [{ ...leadBody, privacyNoticeVersion: 'nis2-privacy-2026-09-08-5090901008de' }, 'VALIDATION_FAILED', 'privacyNoticeVersion'],
@@ -161,6 +187,24 @@ describe('NIS2-CAMPAIGN-CONTRACT 1.0.0 request validation', () => {
     expect(() => parseLeadBody({ ...leadBody, company_website: 'https://bot.invalid' }, allowlist)).toThrow(
       expect.objectContaining({ code: 'VALIDATION_FAILED', field: undefined }),
     );
+  });
+
+  it('rejects a whitespace-only honeypot on every v1 submission type', () => {
+    const whitespace = ' \t\r\n ';
+
+    expect(() => parseAssessmentBody({
+      answers,
+      infrastructureNeeds: [],
+      company_website: whitespace,
+    }, allowlist)).toThrow(expect.objectContaining({ code: 'VALIDATION_FAILED', field: undefined }));
+    expect(() => parseLeadBody({ ...leadBody, company_website: whitespace }, allowlist)).toThrow(
+      expect.objectContaining({ code: 'VALIDATION_FAILED', field: undefined }),
+    );
+    expect(() => parseConsultationBody({
+      leadId: 'nis2lead_01JTEST',
+      attribution: {},
+      company_website: whitespace,
+    }, allowlist)).toThrow(expect.objectContaining({ code: 'VALIDATION_FAILED', field: undefined }));
   });
 
   it('rejects a null honeypot and a non-object body without inventing field identifiers', () => {

@@ -37,8 +37,8 @@ interface RedisEvalResponse {
 
 export type Nis2RateLimitResult =
   | { allowed: true; retryAfter: 0 }
-  | { allowed: false; retryAfter: number; unavailable: false }
-  | { allowed: false; retryAfter: 1; unavailable: true };
+  | { allowed: false; retryAfter: number; unavailable: false; replayOnly: boolean }
+  | { allowed: false; retryAfter: 1; unavailable: true; replayOnly: false };
 
 interface RateLimitOptions {
   fetchImpl?: typeof fetch;
@@ -101,17 +101,21 @@ export async function consumeNis2RateLimit(
     const counts = parseCounts(body.result, keys.length);
     if (!counts) return unavailable();
 
-    const limits = [config.policy.global, config.policy.network, config.policy.idempotencyKey];
-    return counts.some((count, index) => count > limits[index])
-      ? { allowed: false, retryAfter, unavailable: false }
-      : { allowed: true, retryAfter: 0 };
+    const [globalCount, networkCount, keyCount] = counts;
+    if (globalCount > config.policy.global || networkCount > config.policy.network) {
+      return { allowed: false, retryAfter, unavailable: false, replayOnly: false };
+    }
+    if (keyCount > config.policy.idempotencyKey) {
+      return { allowed: false, retryAfter, unavailable: false, replayOnly: true };
+    }
+    return { allowed: true, retryAfter: 0 };
   } catch {
     return unavailable();
   }
 }
 
 function unavailable(): Nis2RateLimitResult {
-  return { allowed: false, retryAfter: 1, unavailable: true };
+  return { allowed: false, retryAfter: 1, unavailable: true, replayOnly: false };
 }
 
 function readConfig(endpoint: EndpointKind, env: NodeJS.ProcessEnv) {

@@ -44,7 +44,7 @@ export async function handleV1Request(
   try {
     const common = parseV1Request(req.headers, req.body);
     const rateLimit = await consumeNis2RateLimit(req, endpoint);
-    if (!rateLimit.allowed) {
+    if (!rateLimit.allowed && !rateLimit.replayOnly) {
       res.setHeader('Retry-After', String(rateLimit.retryAfter));
       throw new ContractError(
         rateLimit.unavailable ? 'PERSISTENCE_UNAVAILABLE' : 'RATE_LIMITED',
@@ -52,6 +52,8 @@ export async function handleV1Request(
         true,
       );
     }
+    const replayOnly = !rateLimit.allowed;
+    const retryAfter = replayOnly ? rateLimit.retryAfter : 0;
     const secret = idempotencySecret();
     const allowlist = loadCampaignAllowlist();
     const service: Nis2ModuleService = req.scope.resolve(NIS2_MODULE);
@@ -61,7 +63,7 @@ export async function handleV1Request(
       case 'assessment': {
         const assessment = parseAssessmentBody(req.body, allowlist);
         const evaluation = evaluateNis2(assessment.answers);
-        result = await service.createAssessmentSubmission({
+        const input = {
           ...common,
           requestDigest: canonicalDigest(materialSubmission(assessment), secret),
           requestId,
@@ -71,13 +73,16 @@ export async function handleV1Request(
             { answers: materialAnswers(assessment.answers), rulesVersion: evaluation.rulesVersion },
             secret,
           ),
-        });
+        };
+        result = replayOnly
+          ? await service.replaySubmission(endpoint, input)
+          : await service.createAssessmentSubmission(input);
         break;
       }
       case 'lead': {
         const lead = parseLeadBody(req.body, allowlist);
         const evaluation = evaluateNis2(lead.answers);
-        result = await service.createLeadSubmission({
+        const input = {
           ...common,
           requestDigest: canonicalDigest(materialSubmission(lead), secret),
           requestId,
@@ -88,19 +93,30 @@ export async function handleV1Request(
             secret,
           ),
           qualification: qualificationFor(evaluation.scopeResult, lead.infrastructureNeeds),
-        });
+        } as const;
+        result = replayOnly
+          ? await service.replaySubmission(endpoint, input)
+          : await service.createLeadSubmission(input);
         break;
       }
       case 'consultation': {
         const consultation = parseConsultationBody(req.body, allowlist);
-        result = await service.createConsultationSubmission({
+        const input = {
           ...common,
           requestDigest: canonicalDigest(consultation, secret),
           requestId,
           consultation,
-        });
+        };
+        result = replayOnly
+          ? await service.replaySubmission(endpoint, input)
+          : await service.createConsultationSubmission(input);
         break;
       }
+    }
+
+    if (result === null) {
+      res.setHeader('Retry-After', String(retryAfter));
+      throw new ContractError('RATE_LIMITED', 429, true);
     }
 
     status = result.status;

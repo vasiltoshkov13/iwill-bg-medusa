@@ -25,7 +25,7 @@ import {
   NisOutbox,
 } from './models';
 
-interface SubmissionBase {
+export interface SubmissionBase {
   idempotencyKey: string;
   requestDigest: string;
   requestId: string;
@@ -87,27 +87,34 @@ class Nis2ModuleService extends MedusaService({
     return this.executeIdempotent('consultation', input, () => this.createConsultationTransaction_(input));
   }
 
-  private async executeIdempotent(
+  /** Resolve a committed idempotency result without opening a write path. */
+  async replaySubmission(
     endpointKind: EndpointKind,
     input: SubmissionBase,
-    create: () => Promise<DurableResponse>,
-  ): Promise<DurableResponse> {
+  ): Promise<DurableResponse | null> {
     let existing;
     try {
       existing = await this.findIdempotency(endpointKind, input.idempotencyKey);
     } catch (error) {
       if (error instanceof ContractError) throw error;
-      // The initial lookup happens before a write transaction exists.
       throw new ContractError('PERSISTENCE_UNAVAILABLE', 503, true);
     }
 
-    if (existing) {
-      return {
-        status: 200,
-        body: resolveExistingIdempotency(existing, input.requestDigest, input.requestId),
-        persistenceOutcome: 'none',
-      };
-    }
+    if (!existing) return null;
+    return {
+      status: 200,
+      body: resolveExistingIdempotency(existing, input.requestDigest, input.requestId),
+      persistenceOutcome: 'none',
+    };
+  }
+
+  private async executeIdempotent(
+    endpointKind: EndpointKind,
+    input: SubmissionBase,
+    create: () => Promise<DurableResponse>,
+  ): Promise<DurableResponse> {
+    const replay = await this.replaySubmission(endpointKind, input);
+    if (replay) return replay;
 
     try {
       const created = await create();

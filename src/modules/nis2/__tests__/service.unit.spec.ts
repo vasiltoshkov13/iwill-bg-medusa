@@ -19,6 +19,49 @@ function serviceDouble(): any {
 }
 
 describe('NIS2 durable service idempotency boundary', () => {
+  it('performs a read-only replay lookup and returns null when no record exists', async () => {
+    const service = serviceDouble();
+    service.listNisIdempotencies = jest.fn().mockResolvedValue([]);
+    service.createLeadTransaction_ = jest.fn();
+
+    await expect(service.replaySubmission('lead', {
+      idempotencyKey: '5d9cac03-85c8-44a9-a218-b427a42de85e',
+      requestDigest: DIGEST,
+      requestId: 'retry-request',
+    })).resolves.toBeNull();
+
+    expect(service.createLeadTransaction_).not.toHaveBeenCalled();
+  });
+
+  it('returns a correlated replay or 409 from the read-only lookup without a transaction', async () => {
+    const service = serviceDouble();
+    service.listNisIdempotencies = jest.fn().mockResolvedValue([
+      { request_digest: DIGEST, response_body: committed },
+    ]);
+    service.createLeadTransaction_ = jest.fn();
+
+    await expect(service.replaySubmission('lead', {
+      idempotencyKey: '5d9cac03-85c8-44a9-a218-b427a42de85e',
+      requestDigest: DIGEST,
+      requestId: 'retry-request',
+    })).resolves.toEqual({
+      status: 200,
+      body: expect.objectContaining({ requestId: 'retry-request', idempotency: { replayed: true } }),
+      persistenceOutcome: 'none',
+    });
+    await expect(service.replaySubmission('lead', {
+      idempotencyKey: '5d9cac03-85c8-44a9-a218-b427a42de85e',
+      requestDigest: 'b'.repeat(64),
+      requestId: 'changed-request',
+    })).rejects.toEqual(expect.objectContaining<Partial<ContractError>>({
+      code: 'IDEMPOTENCY_KEY_REUSED',
+      status: 409,
+      retryable: false,
+    }));
+
+    expect(service.createLeadTransaction_).not.toHaveBeenCalled();
+  });
+
   it('returns a replay before attempting another transaction', async () => {
     const service = serviceDouble();
     service.listNisIdempotencies = jest.fn().mockResolvedValue([

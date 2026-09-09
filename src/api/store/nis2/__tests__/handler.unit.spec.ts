@@ -1,4 +1,4 @@
-import { CONTRACT_VERSION } from '../contract';
+import { CONTRACT_VERSION, ContractError } from '../contract';
 import { handleV1Request } from '../handler';
 
 const KEY = '5d9cac03-85c8-44a9-a218-b427a42de85e';
@@ -58,6 +58,9 @@ describe('NIS2 v1 route durability adapter', () => {
     delete process.env.NIS2_RATE_LIMIT_REST_URL;
     delete process.env.NIS2_RATE_LIMIT_REST_TOKEN;
     delete process.env.NIS2_RATE_LIMIT_HMAC_SECRET;
+    delete process.env.NIS2_RATE_LIMIT_ASSESSMENT_GLOBAL_MAX;
+    delete process.env.NIS2_RATE_LIMIT_ASSESSMENT_NETWORK_MAX;
+    delete process.env.NIS2_RATE_LIMIT_ASSESSMENT_KEY_MAX;
     global.fetch = originalFetch;
   });
 
@@ -125,6 +128,124 @@ describe('NIS2 v1 route durability adapter', () => {
     expect(res.json.mock.calls[0][0].requestId).toBe(REPLAY_REQUEST_ID);
     expect(res.setHeader).toHaveBeenCalledWith('X-Request-ID', REPLAY_REQUEST_ID);
     expect(res.setHeader).toHaveBeenCalledWith('Idempotency-Replayed', 'true');
+  });
+
+  it('uses only a read-only replay lookup when just the logical key ceiling is exceeded', async () => {
+    process.env.NIS2_RATE_LIMIT_ASSESSMENT_KEY_MAX = '1';
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ result: [1, 1, 2] }),
+    });
+    const createAssessmentSubmission = jest.fn();
+    const replaySubmission = jest.fn().mockImplementation(async (_endpoint, input) => ({
+      status: 200,
+      body: {
+        assessment: { id: 'nis2asm_01JTEST' },
+        requestId: input.requestId,
+        idempotency: { replayed: true },
+      },
+      persistenceOutcome: 'none',
+    }));
+    const service = { createAssessmentSubmission, replaySubmission };
+    const res = responseDouble();
+
+    await handleV1Request(
+      'assessment',
+      requestDouble({ answers, infrastructureNeeds: [], attribution: {} }, service),
+      res,
+    );
+
+    expect(replaySubmission).toHaveBeenCalledWith('assessment', expect.objectContaining({
+      idempotencyKey: KEY,
+      requestId: REQUEST_ID,
+      requestDigest: expect.stringMatching(/^[0-9a-f]{64}$/),
+    }));
+    expect(createAssessmentSubmission).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.setHeader).toHaveBeenCalledWith('Idempotency-Replayed', 'true');
+  });
+
+  it('returns 429 without a write when a key-only replay lookup finds no committed record', async () => {
+    process.env.NIS2_RATE_LIMIT_ASSESSMENT_KEY_MAX = '1';
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ result: [1, 1, 2] }),
+    });
+    const service = {
+      createAssessmentSubmission: jest.fn(),
+      replaySubmission: jest.fn().mockResolvedValue(null),
+    };
+    const res = responseDouble();
+
+    await handleV1Request(
+      'assessment',
+      requestDouble({ answers, infrastructureNeeds: [], attribution: {} }, service),
+      res,
+    );
+
+    expect(service.replaySubmission).toHaveBeenCalledTimes(1);
+    expect(service.createAssessmentSubmission).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(429);
+    expect(res.json.mock.calls[0][0]).toEqual(expect.objectContaining({
+      error: expect.objectContaining({ code: 'RATE_LIMITED', retryable: true }),
+      requestId: REQUEST_ID,
+    }));
+    expect(res.setHeader).toHaveBeenCalledWith('Retry-After', expect.any(String));
+  });
+
+  it('preserves a 409 material-change result from a key-only replay lookup', async () => {
+    process.env.NIS2_RATE_LIMIT_ASSESSMENT_KEY_MAX = '1';
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ result: [1, 1, 2] }),
+    });
+    const service = {
+      createAssessmentSubmission: jest.fn(),
+      replaySubmission: jest.fn().mockRejectedValue(
+        new ContractError('IDEMPOTENCY_KEY_REUSED', 409, false),
+      ),
+    };
+    const res = responseDouble();
+
+    await handleV1Request(
+      'assessment',
+      requestDouble({ answers, infrastructureNeeds: [], attribution: {} }, service),
+      res,
+    );
+
+    expect(service.createAssessmentSubmission).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(409);
+    expect(res.json.mock.calls[0][0]).toEqual(expect.objectContaining({
+      error: expect.objectContaining({ code: 'IDEMPOTENCY_KEY_REUSED', retryable: false }),
+      requestId: REQUEST_ID,
+    }));
+  });
+
+  it.each([
+    ['fleet', [2, 1, 2], 'NIS2_RATE_LIMIT_ASSESSMENT_GLOBAL_MAX'],
+    ['peer-network', [1, 2, 2], 'NIS2_RATE_LIMIT_ASSESSMENT_NETWORK_MAX'],
+  ] as const)('never reaches storage when the %s ceiling is exceeded', async (_scope, counts, limitName) => {
+    process.env.NIS2_RATE_LIMIT_ASSESSMENT_KEY_MAX = '1';
+    process.env[limitName] = '1';
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ result: [...counts] }),
+    });
+    const service = {
+      createAssessmentSubmission: jest.fn(),
+      replaySubmission: jest.fn(),
+    };
+    const res = responseDouble();
+
+    await handleV1Request(
+      'assessment',
+      requestDouble({ answers, infrastructureNeeds: [], attribution: {} }, service),
+      res,
+    );
+
+    expect(service.replaySubmission).not.toHaveBeenCalled();
+    expect(service.createAssessmentSubmission).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(429);
   });
 
   it('digests normalized material request data rather than superficial formatting', async () => {
@@ -223,7 +344,7 @@ describe('NIS2 v1 route durability adapter', () => {
   it('rejects a honeypot before calling the durable service', async () => {
     const service = { createAssessmentSubmission: jest.fn() };
     const req = requestDouble(
-      { answers, infrastructureNeeds: [], attribution: {}, company_website: 'bot value' },
+      { answers, infrastructureNeeds: [], attribution: {}, company_website: ' \t\r\n ' },
       service,
     );
     const res = responseDouble();

@@ -8,6 +8,7 @@ import {
   SPECIAL_CONDITIONS,
   TURNOVER_BUCKETS,
 } from '../../../modules/nis2/rules/sectors';
+import { isPublicBody } from '../../../modules/nis2/rules/rules';
 import { ContractError } from './contract';
 
 export interface CampaignAllowlist {
@@ -138,7 +139,8 @@ function honeypot(raw: Record<string, unknown>): void {
   const value = raw.company_website;
   if (value === undefined || value === '') return;
   if (value === null || typeof value !== 'string') validation('company_website');
-  if (value.trim() !== '') validation();
+  // Do not normalize this anti-bot field: every non-empty raw string is a hit.
+  validation();
 }
 
 function requiredString(field: string, value: unknown, maxLength: number): string {
@@ -191,13 +193,23 @@ export function parseAnswers(input: unknown): Nis2Answers {
     validation('answers.specialConditions');
   }
 
+  const organizationType = oneOf(
+    'answers.organizationType',
+    raw.organizationType,
+    ORGANIZATION_TYPE_IDS,
+  ) as Nis2Answers['organizationType'];
+  const sector = oneOf(
+    'answers.sector',
+    raw.sector,
+    ALL_SECTOR_IDS as unknown as string[],
+  ) as Nis2Answers['sector'];
+  if (sector === 'PUBLIC_ADMINISTRATION' && !isPublicBody(organizationType)) {
+    validation('answers.sector');
+  }
+
   return {
-    organizationType: oneOf(
-      'answers.organizationType',
-      raw.organizationType,
-      ORGANIZATION_TYPE_IDS,
-    ) as Nis2Answers['organizationType'],
-    sector: oneOf('answers.sector', raw.sector, ALL_SECTOR_IDS as unknown as string[]) as Nis2Answers['sector'],
+    organizationType,
+    sector,
     subsector,
     employees: oneOf('answers.employees', raw.employees, EMPLOYEE_BUCKET_IDS) as Nis2Answers['employees'],
     turnover: oneOf('answers.turnover', raw.turnover, TURNOVER_BUCKET_IDS) as Nis2Answers['turnover'],

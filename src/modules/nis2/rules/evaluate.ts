@@ -89,10 +89,10 @@ export function evaluateNis2(input: Partial<Nis2Answers>): Nis2Result {
 
   const draft =
     evaluateSizeIndependent(answers, size) ??
-    evaluatePublicBody(answers, size, annex) ??
+    evaluatePublicBody(answers) ??
     evaluateStandardPath(answers, size, annex);
 
-  const withGroup = applyGroupUncertainty(draft, answers, size);
+  const withGroup = applyGroupUncertainty(draft, answers, size, annex);
   const reasonCodes = dedupe(withGroup.reasonCodes);
 
   return {
@@ -121,6 +121,9 @@ export function evaluateNis2(input: Partial<Nis2Answers>): Nis2Result {
  */
 function resolveAnnex(answers: Nis2Answers): AnnexClass {
   if (isPublicBody(answers.organizationType)) return 'PUBLIC_ADMINISTRATION';
+  // A public-administration sector is meaningful only for a true public body.
+  // Direct evaluator callers can bypass the v1 validator, so fail cautiously.
+  if (answers.sector === 'PUBLIC_ADMINISTRATION') return 'UNKNOWN';
   return annexForSector(answers.sector);
 }
 
@@ -185,13 +188,8 @@ function evaluateSizeIndependent(answers: Nis2Answers, size: EnterpriseSize): Dr
 }
 
 /** Public administration and municipal structures. */
-function evaluatePublicBody(
-  answers: Nis2Answers,
-  size: EnterpriseSize,
-  annex: AnnexClass,
-): Draft | null {
-  const isPublic = annex === 'PUBLIC_ADMINISTRATION' || answers.sector === 'PUBLIC_ADMINISTRATION';
-  if (!isPublic) return null;
+function evaluatePublicBody(answers: Nis2Answers): Draft | null {
+  if (!isPublicBody(answers.organizationType)) return null;
 
   if (answers.organizationType === 'MUNICIPALITY') {
     return {
@@ -275,14 +273,21 @@ function evaluateStandardPath(
  * so a small standalone reading can be wrong. This only ever makes the result
  * more cautious, never less.
  */
-function applyGroupUncertainty(draft: Draft, answers: Nis2Answers, size: EnterpriseSize): Draft {
+function applyGroupUncertainty(
+  draft: Draft,
+  answers: Nis2Answers,
+  size: EnterpriseSize,
+  annex: AnnexClass,
+): Draft {
   if (answers.groupStatus === 'NO') return draft;
 
   const reasonCode: ReasonCode =
     answers.groupStatus === 'YES' ? 'GROUP_LINKED_ENTERPRISES' : 'GROUP_STATUS_UNKNOWN';
 
   const belowThresholds = size === 'MICRO' || size === 'SMALL';
-  const outsideOnSizeGrounds = draft.scopeResult === 'LIKELY_OUTSIDE_STANDARD_SCOPE' && belowThresholds;
+  const listedAnnex = annex === 'ANNEX_I' || annex === 'ANNEX_II';
+  const outsideOnSizeGrounds =
+    draft.scopeResult === 'LIKELY_OUTSIDE_STANDARD_SCOPE' && belowThresholds && listedAnnex;
 
   if (!outsideOnSizeGrounds) {
     // Group structure cannot pull an in-scope entity back out of scope; record

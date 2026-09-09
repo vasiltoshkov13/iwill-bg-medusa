@@ -163,6 +163,36 @@ medusaIntegrationTestRunner({
         expect((await service().listNisAssessments({})).length).toBe(before);
       });
 
+      it('rejects a non-public organization claiming the public-administration sector', async () => {
+        const key = '825c9e88-3326-45d7-a269-fad565240baa';
+        const beforeAssessments = (await service().listNisAssessments({})).length;
+        const beforeOutbox = (await service().listNisOutboxes({})).length;
+        const response = await api.post('/store/nis2/assessments', {
+          ...assessmentBody,
+          answers: {
+            ...assessmentBody.answers,
+            organizationType: 'PRIVATE_ENTERPRISE',
+            sector: 'PUBLIC_ADMINISTRATION',
+          },
+        }, {
+          headers: headers(key),
+          ...acceptAnyStatus,
+        });
+
+        expect(response.status).toBe(400);
+        expect(response.data.error).toEqual(expect.objectContaining({
+          code: 'VALIDATION_FAILED',
+          retryable: false,
+          field: 'answers.sector',
+        }));
+        expect((await service().listNisAssessments({})).length).toBe(beforeAssessments);
+        expect((await service().listNisOutboxes({})).length).toBe(beforeOutbox);
+        expect(await service().listNisIdempotencies({
+          endpoint_kind: 'assessment',
+          idempotency_key: key,
+        })).toHaveLength(0);
+      });
+
       it('requires versioned privacy consent at the direct Medusa lead boundary', async () => {
         const requestId = '10000000-0000-4000-8000-000000000021';
         const before = (await service().listNisLeads({})).length;
@@ -365,25 +395,61 @@ medusaIntegrationTestRunner({
         expect((await service().listNisAssessments({})).length).toBe(before + 2);
       });
 
-      it('enforces a logical-submission key ceiling before replay work', async () => {
-        process.env.NIS2_RATE_LIMIT_ASSESSMENT_KEY_MAX = '2';
+      it('allows a committed identical replay after the logical-submission key ceiling', async () => {
+        process.env.NIS2_RATE_LIMIT_ASSESSMENT_KEY_MAX = '1';
         const key = 'e1a9c1ac-a8cc-4312-9981-6b6c1448f0d9';
+        const before = (await service().listNisAssessments({})).length;
         const first = await api.post('/store/nis2/assessments', assessmentBody, {
           headers: headers(key),
           ...acceptAnyStatus,
         });
-        const second = await api.post('/store/nis2/assessments', assessmentBody, {
-          headers: headers(key),
-          ...acceptAnyStatus,
-        });
-        const third = await api.post('/store/nis2/assessments', assessmentBody, {
-          headers: headers(key),
+        const replayRequestId = '10000000-0000-4000-8000-000000000025';
+        const replay = await api.post('/store/nis2/assessments', assessmentBody, {
+          headers: headers(key, replayRequestId),
           ...acceptAnyStatus,
         });
 
-        expect([first.status, second.status, third.status]).toEqual([201, 200, 429]);
-        expect(third.data.error.code).toBe('RATE_LIMITED');
+        expect([first.status, replay.status]).toEqual([201, 200]);
+        expect(replay.data.assessment.id).toBe(first.data.assessment.id);
+        expect(replay.data.requestId).toBe(replayRequestId);
+        expect(replay.data.idempotency).toEqual({ replayed: true });
+        expect(replay.headers['idempotency-replayed']).toBe('true');
+        expect((await service().listNisAssessments({})).length).toBe(before + 1);
         expect(await service().listNisIdempotencies({ idempotency_key: key })).toHaveLength(1);
+      });
+
+      it('returns 429 with zero writes when a key-only replay check finds no record', async () => {
+        process.env.NIS2_RATE_LIMIT_LEAD_KEY_MAX = '1';
+        const key = '0db13773-9988-4271-b872-dfc28c02f796';
+        const requestId = '10000000-0000-4000-8000-000000000026';
+        const beforeLeads = (await service().listNisLeads({})).length;
+        const beforeOutbox = (await service().listNisOutboxes({})).length;
+
+        const honeypot = await api.post(
+          '/store/nis2/leads',
+          { ...leadBody, company_website: ' \t\r\n ' },
+          { headers: headers(key), ...acceptAnyStatus },
+        );
+        const denied = await api.post('/store/nis2/leads', leadBody, {
+          headers: headers(key, requestId),
+          ...acceptAnyStatus,
+        });
+
+        expect(honeypot.status).toBe(400);
+        expect(honeypot.data.error).toEqual(expect.objectContaining({
+          code: 'VALIDATION_FAILED',
+          retryable: false,
+        }));
+        expect(denied.status).toBe(429);
+        expect(denied.headers['x-request-id']).toBe(requestId);
+        expect(denied.headers['retry-after']).toEqual(expect.any(String));
+        expect(denied.data).toEqual({
+          error: expect.objectContaining({ code: 'RATE_LIMITED', retryable: true }),
+          requestId,
+        });
+        expect((await service().listNisLeads({})).length).toBe(beforeLeads);
+        expect((await service().listNisOutboxes({})).length).toBe(beforeOutbox);
+        expect(await service().listNisIdempotencies({ endpoint_kind: 'lead', idempotency_key: key })).toHaveLength(0);
       });
 
       it('fails closed without a durable write when the shared limiter is unavailable', async () => {
@@ -426,8 +492,10 @@ medusaIntegrationTestRunner({
         expect(await service().listNisIdempotencies({ endpoint_kind: 'assessment', idempotency_key: key })).toHaveLength(1);
       });
 
-      it('returns 409 for the same key with changed material data and creates no second row', async () => {
+      it('returns 409 over the key ceiling for changed material and creates no second row', async () => {
+        process.env.NIS2_RATE_LIMIT_ASSESSMENT_KEY_MAX = '1';
         const key = 'ba70e6aa-1ca1-4f64-bf4d-f083057b53bd';
+        const before = (await service().listNisAssessments({})).length;
         const first = await api.post('/store/nis2/assessments', assessmentBody, { headers: headers(key) });
         const changed = await api.post(
           '/store/nis2/assessments',
@@ -438,6 +506,7 @@ medusaIntegrationTestRunner({
         expect(first.status).toBe(201);
         expect(changed.status).toBe(409);
         expect(changed.data.error).toEqual(expect.objectContaining({ code: 'IDEMPOTENCY_KEY_REUSED', retryable: false }));
+        expect((await service().listNisAssessments({})).length).toBe(before + 1);
         expect(await service().listNisIdempotencies({ endpoint_kind: 'assessment', idempotency_key: key })).toHaveLength(1);
       });
 
@@ -533,7 +602,7 @@ medusaIntegrationTestRunner({
         ]);
       });
 
-      it('creates no durable record for missing idempotency or a non-blank honeypot', async () => {
+      it('creates no durable record for missing idempotency or a whitespace-only honeypot', async () => {
         const before = (await service().listNisAssessments({})).length;
         const missing = await api.post('/store/nis2/assessments', assessmentBody, {
           headers: headers(),
@@ -541,7 +610,7 @@ medusaIntegrationTestRunner({
         });
         const honeypot = await api.post(
           '/store/nis2/assessments',
-          { ...assessmentBody, company_website: 'bot-value' },
+          { ...assessmentBody, company_website: ' \t\r\n ' },
           {
             headers: headers('b932b7ea-c914-40f4-838e-b011f870dc48'),
             ...acceptAnyStatus,
