@@ -24,4 +24,4 @@ RUN corepack enable
 
 EXPOSE 9000
 
-CMD ["sh", "-c", "npx medusa db:migrate && npm run start"]
+CMD ["sh", "-c", "export MEDUSA_DISABLE_TELEMETRY=true MEDUSA_WORKER_MODE=${MEDUSA_WORKER_MODE:-shared} && npx medusa db:migrate && exec npm run start"]
