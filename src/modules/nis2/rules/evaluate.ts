@@ -89,6 +89,7 @@ export function evaluateNis2(input: Partial<Nis2Answers>): Nis2Result {
 
   const draft =
     evaluateSizeIndependent(answers, size) ??
+    evaluateOrganizationSectorContradiction(answers) ??
     evaluatePublicBody(answers) ??
     evaluateStandardPath(answers, size, annex);
 
@@ -187,6 +188,32 @@ function evaluateSizeIndependent(answers: Nis2Answers, size: EnterpriseSize): Dr
   return null;
 }
 
+const KNOWN_NON_PUBLIC_ORGANIZATION_TYPES: Nis2Answers['organizationType'][] = [
+  'PRIVATE_ENTERPRISE',
+  'EDUCATION',
+  'RESEARCH_ORGANIZATION',
+  'OTHER',
+];
+
+/**
+ * Incomplete (UNKNOWN) or contradictory non-public organisation types must not
+ * fall through to the central public-administration classification.
+ */
+function evaluateOrganizationSectorContradiction(answers: Nis2Answers): Draft | null {
+  if (answers.sector !== 'PUBLIC_ADMINISTRATION') return null;
+
+  const incomplete = answers.organizationType === 'UNKNOWN';
+  const contradictory = KNOWN_NON_PUBLIC_ORGANIZATION_TYPES.includes(answers.organizationType);
+  if (!incomplete && !contradictory) return null;
+
+  return {
+    scopeResult: 'MANUAL_REVIEW_REQUIRED',
+    entityCategory: 'UNDETERMINED',
+    reasonCodes: ['ORGANIZATION_SECTOR_CONTRADICTION'],
+    requiresManualReview: true,
+  };
+}
+
 /** Public administration and municipal structures. */
 function evaluatePublicBody(answers: Nis2Answers): Draft | null {
   if (!isPublicBody(answers.organizationType)) return null;
@@ -280,6 +307,7 @@ function applyGroupUncertainty(
   annex: AnnexClass,
 ): Draft {
   if (answers.groupStatus === 'NO') return draft;
+  if (draft.reasonCodes.includes('ORGANIZATION_SECTOR_CONTRADICTION')) return draft;
 
   const reasonCode: ReasonCode =
     answers.groupStatus === 'YES' ? 'GROUP_LINKED_ENTERPRISES' : 'GROUP_STATUS_UNKNOWN';

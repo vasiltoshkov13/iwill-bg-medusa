@@ -66,8 +66,8 @@ describe('NIS2 v1 route durability adapter', () => {
 
   it('returns 201 only after the assessment service reports a committed row', async () => {
     const committed = {
-      assessment: { id: 'nis2asm_01JTEST', persistedAt: '2026-09-04T00:00:00.000Z', rulesVersion: 'BG-NIS2-2026-08-v1' },
-      result: { rulesVersion: 'BG-NIS2-2026-08-v1' },
+      assessment: { id: 'nis2asm_01JTEST', persistedAt: '2026-09-04T00:00:00.000Z', rulesVersion: 'BG-NIS2-2026-09-v1' },
+      result: { rulesVersion: 'BG-NIS2-2026-09-v1' },
       requestId: REQUEST_ID,
       idempotency: { replayed: false },
     };

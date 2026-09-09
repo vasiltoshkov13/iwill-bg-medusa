@@ -22,7 +22,7 @@ describe('NIS2-CAMPAIGN-CONTRACT 1.0.0 common API contract', () => {
   it('pins the shared rule version and every contract enum exported by the rule engine', () => {
     const ids = (values: Array<{ id: unknown }>) => values.map(({ id }) => String(id));
 
-    expect(RULES_VERSION).toBe('BG-NIS2-2026-08-v1');
+    expect(RULES_VERSION).toBe('BG-NIS2-2026-09-v1');
     expect(ids(ORGANIZATION_TYPES)).toEqual([
       'PRIVATE_ENTERPRISE', 'STATE_ADMINISTRATION', 'MUNICIPALITY', 'EDUCATION',
       'RESEARCH_ORGANIZATION', 'OTHER', 'UNKNOWN',

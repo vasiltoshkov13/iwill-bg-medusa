@@ -163,10 +163,8 @@ medusaIntegrationTestRunner({
         expect((await service().listNisAssessments({})).length).toBe(before);
       });
 
-      it('rejects a non-public organization claiming the public-administration sector', async () => {
+      it('accepts a private enterprise with a public-administration sector on the evaluation path', async () => {
         const key = '825c9e88-3326-45d7-a269-fad565240baa';
-        const beforeAssessments = (await service().listNisAssessments({})).length;
-        const beforeOutbox = (await service().listNisOutboxes({})).length;
         const response = await api.post('/store/nis2/assessments', {
           ...assessmentBody,
           answers: {
@@ -179,16 +177,56 @@ medusaIntegrationTestRunner({
           ...acceptAnyStatus,
         });
 
-        expect(response.status).toBe(400);
-        expect(response.data.error).toEqual(expect.objectContaining({
-          code: 'VALIDATION_FAILED',
-          retryable: false,
-          field: 'answers.sector',
+        expect(response.status).toBe(201);
+        expect(response.data.result).toEqual(expect.objectContaining({
+          scopeResult: 'MANUAL_REVIEW_REQUIRED',
+          entityCategory: 'UNDETERMINED',
+          confidence: 'LOW',
+          requiresManualReview: true,
+          reasonCodes: ['ORGANIZATION_SECTOR_CONTRADICTION'],
+          rulesVersion: 'BG-NIS2-2026-09-v1',
         }));
-        expect((await service().listNisAssessments({})).length).toBe(beforeAssessments);
-        expect((await service().listNisOutboxes({})).length).toBe(beforeOutbox);
+        expect(response.data.result.annexClass).not.toBe('PUBLIC_ADMINISTRATION');
+        expect(response.data.result.reasonCodes).not.toContain('PUBLIC_ADMIN_CENTRAL');
+        const assessmentId = response.data.assessment.id;
+        expect(await service().listNisAssessments({ id: assessmentId })).toHaveLength(1);
         expect(await service().listNisIdempotencies({
           endpoint_kind: 'assessment',
+          idempotency_key: key,
+        })).toHaveLength(1);
+      });
+
+      it('cannot bind a new-version lead to an assessment stored under a previous rules version', async () => {
+        const assessmentResponse = await api.post('/store/nis2/assessments', assessmentBody, {
+          headers: headers('3c1f6a2b-8d14-4e9a-9c70-2b6d1f0a4c11'),
+        });
+        expect(assessmentResponse.status).toBe(201);
+        const assessmentId = assessmentResponse.data.assessment.id as string;
+        await dbConnection.raw(
+          `update nis2_assessment set rules_version = 'BG-NIS2-2026-08-v1' where id = '${assessmentId}'`,
+        );
+
+        const key = '7e4b19d0-2a58-4c13-8f6a-91d0c3b7e245';
+        const beforeLeads = (await service().listNisLeads({})).length;
+        const beforeOutbox = (await service().listNisOutboxes({})).length;
+        const response = await api.post('/store/nis2/leads', {
+          ...storefrontLeadBody,
+          assessmentId,
+          answers: assessmentBody.answers,
+        }, {
+          headers: headers(key),
+          ...acceptAnyStatus,
+        });
+
+        expect(response.status).toBe(409);
+        expect(response.data.error).toEqual(expect.objectContaining({
+          code: 'ASSESSMENT_MISMATCH',
+          retryable: false,
+        }));
+        expect((await service().listNisLeads({})).length).toBe(beforeLeads);
+        expect((await service().listNisOutboxes({})).length).toBe(beforeOutbox);
+        expect(await service().listNisIdempotencies({
+          endpoint_kind: 'lead',
           idempotency_key: key,
         })).toHaveLength(0);
       });
@@ -566,7 +604,7 @@ medusaIntegrationTestRunner({
         expect(records).toHaveLength(1);
         expect(records[0].result_snapshot).toEqual(
           expect.objectContaining({
-            rulesVersion: 'BG-NIS2-2026-08-v1',
+            rulesVersion: 'BG-NIS2-2026-09-v1',
             headline: expect.any(String),
             explanation: expect.any(String),
             reasons: expect.any(Array),

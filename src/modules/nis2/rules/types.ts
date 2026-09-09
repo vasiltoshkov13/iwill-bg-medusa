@@ -143,7 +143,8 @@ export type ReasonCode =
   | 'SIGNIFICANT_IMPACT_RISK'
   | 'GROUP_LINKED_ENTERPRISES'
   | 'GROUP_STATUS_UNKNOWN'
-  | 'SUPPLY_CHAIN_INDIRECT';
+  | 'SUPPLY_CHAIN_INDIRECT'
+  | 'ORGANIZATION_SECTOR_CONTRADICTION';
 
 export interface Nis2Result {
   scopeResult: ScopeResult;

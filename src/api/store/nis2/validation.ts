@@ -8,7 +8,6 @@ import {
   SPECIAL_CONDITIONS,
   TURNOVER_BUCKETS,
 } from '../../../modules/nis2/rules/sectors';
-import { isPublicBody } from '../../../modules/nis2/rules/rules';
 import { ContractError } from './contract';
 
 export interface CampaignAllowlist {
@@ -203,9 +202,6 @@ export function parseAnswers(input: unknown): Nis2Answers {
     raw.sector,
     ALL_SECTOR_IDS as unknown as string[],
   ) as Nis2Answers['sector'];
-  if (sector === 'PUBLIC_ADMINISTRATION' && !isPublicBody(organizationType)) {
-    validation('answers.sector');
-  }
 
   return {
     organizationType,

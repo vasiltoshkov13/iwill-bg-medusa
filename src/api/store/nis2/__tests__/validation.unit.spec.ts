@@ -142,14 +142,11 @@ describe('NIS2-CAMPAIGN-CONTRACT 1.0.0 request validation', () => {
     'RESEARCH_ORGANIZATION',
     'OTHER',
     'UNKNOWN',
-  ])('rejects PUBLIC_ADMINISTRATION for non-public organization type %s', (organizationType) => {
-    expect(() => parseAssessmentBody({
+  ])('accepts PUBLIC_ADMINISTRATION for non-public organization type %s', (organizationType) => {
+    expect(parseAssessmentBody({
       answers: { ...answers, organizationType, sector: 'PUBLIC_ADMINISTRATION' },
       infrastructureNeeds: [],
-    })).toThrow(expect.objectContaining({
-      code: 'VALIDATION_FAILED',
-      field: 'answers.sector',
-    }));
+    }).answers).toEqual(expect.objectContaining({ organizationType, sector: 'PUBLIC_ADMINISTRATION' }));
   });
 
   it.each(['STATE_ADMINISTRATION', 'MUNICIPALITY'])(

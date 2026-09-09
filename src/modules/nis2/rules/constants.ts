@@ -13,7 +13,7 @@
  *
  * Format: BG-NIS2-<YYYY>-<MM>-v<n>
  */
-export const RULES_VERSION = 'BG-NIS2-2026-08-v1';
+export const RULES_VERSION = 'BG-NIS2-2026-09-v1';
 
 /**
  * Enterprise-size ceilings from Commission Recommendation 2003/361/EC
