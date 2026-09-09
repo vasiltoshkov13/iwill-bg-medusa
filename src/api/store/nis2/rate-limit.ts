@@ -60,7 +60,12 @@ export async function consumeNis2RateLimit(
 ): Promise<Nis2RateLimitResult> {
   const env = options.env ?? process.env;
   const config = readConfig(endpoint, env);
-  if (!config) return unavailable();
+  if (!config) {
+    if (env.NIS2_RATE_LIMIT_ALLOW_UNCONFIGURED === 'true') {
+      return { allowed: true, retryAfter: 0 };
+    }
+    return unavailable();
+  }
 
   const now = options.now ?? Date.now();
   const windowStart = Math.floor(now / (config.windowSeconds * 1000));
