@@ -16,11 +16,12 @@ let limiterServer: Server;
 let limiterUrl = '';
 let limiterMode: 'normal' | 'error' = 'normal';
 const limiterCounts = new Map<string, number>();
-const headers = (key?: string) => ({
+const headers = (key?: string, requestId?: string) => ({
   'Content-Type': 'application/json',
   'X-NIS2-Contract-Version': VERSION,
   'x-publishable-api-key': publishableKey,
   ...(key ? { 'Idempotency-Key': key } : {}),
+  ...(requestId ? { 'X-Request-ID': requestId } : {}),
 });
 const acceptAnyStatus = { validateStatus: () => true };
 
@@ -163,42 +164,107 @@ medusaIntegrationTestRunner({
       });
 
       it('requires versioned privacy consent at the direct Medusa lead boundary', async () => {
+        const requestId = '10000000-0000-4000-8000-000000000021';
         const before = (await service().listNisLeads({})).length;
         const response = await api.post(
           '/store/nis2/leads',
           { ...leadBody, privacyConsent: false },
           {
-            headers: headers('d43e8bab-6486-4651-ad6a-ccbd6fa84db5'),
+            headers: headers('d43e8bab-6486-4651-ad6a-ccbd6fa84db5', requestId),
             ...acceptAnyStatus,
           },
         );
 
         expect(response.status).toBe(400);
-        expect(response.data.error).toEqual(expect.objectContaining({
-          code: 'CONSENT_REQUIRED',
-          retryable: false,
-        }));
+        expect(response.data).toEqual({
+          error: {
+            code: 'CONSENT_REQUIRED',
+            message: 'Необходимо е да удостоверите, че сте се запознали с известието за поверителност и поисканото обработване.',
+            retryable: false,
+            field: 'privacyConsent',
+          },
+          requestId,
+        });
+        expect(response.headers['x-request-id']).toBe(requestId);
         expect((await service().listNisLeads({})).length).toBe(before);
       });
 
       it('accepts the exact storefront 34d4045 lead payload as a durable write', async () => {
         const key = '90b3f62f-8c20-4b02-9004-0d8539f76dfa';
+        const requestId = '10000000-0000-4000-8000-000000000022';
+        const replayRequestId = '10000000-0000-4000-8000-000000000023';
         const beforeLeads = (await service().listNisLeads({})).length;
         const beforeOutbox = (await service().listNisOutboxes({})).length;
 
         const response = await api.post('/store/nis2/leads', storefrontLeadBody, {
-          headers: headers(key),
+          headers: headers(key, requestId),
           ...acceptAnyStatus,
         });
 
         expect(response.status).toBe(201);
+        expect(response.data.requestId).toBe(requestId);
+        expect(response.headers['x-request-id']).toBe(requestId);
         const leadId = response.data.lead.id;
         const persisted = await service().listNisLeads({ id: leadId });
         expect(persisted).toHaveLength(1);
         expect(persisted[0].privacy_notice_version).toBe('nis2-privacy-2026-09-08-93ba2f3d8256');
         expect((await service().listNisLeads({})).length).toBe(beforeLeads + 1);
+        const outbox = await service().listNisOutboxes({ domain_id: leadId });
         expect((await service().listNisOutboxes({})).length).toBe(beforeOutbox + 3);
-        expect(await service().listNisIdempotencies({ endpoint_kind: 'lead', idempotency_key: key })).toHaveLength(1);
+        expect(outbox).toHaveLength(3);
+        expect(outbox.every((row) => row.request_id === requestId)).toBe(true);
+        const idempotency = await service().listNisIdempotencies({ endpoint_kind: 'lead', idempotency_key: key });
+        expect(idempotency).toHaveLength(1);
+        expect(idempotency[0].response_body.requestId).toBe(requestId);
+
+        const replay = await api.post('/store/nis2/leads', storefrontLeadBody, {
+          headers: headers(key, replayRequestId),
+          ...acceptAnyStatus,
+        });
+
+        expect(replay.status).toBe(200);
+        expect(replay.data.lead.id).toBe(leadId);
+        expect(replay.data.requestId).toBe(replayRequestId);
+        expect(replay.data.idempotency).toEqual({ replayed: true });
+        expect(replay.headers['x-request-id']).toBe(replayRequestId);
+        expect(replay.headers['idempotency-replayed']).toBe('true');
+        expect((await service().listNisLeads({ id: leadId }))).toHaveLength(1);
+        expect((await service().listNisOutboxes({ domain_id: leadId }))).toHaveLength(3);
+        expect((await service().listNisOutboxes({ domain_id: leadId })).every(
+          (row) => row.request_id === requestId,
+        )).toBe(true);
+        const storedAfterReplay = await service().listNisIdempotencies({ endpoint_kind: 'lead', idempotency_key: key });
+        expect(storedAfterReplay).toHaveLength(1);
+        expect(storedAfterReplay[0].response_body.requestId).toBe(requestId);
+      });
+
+      it('generates safe correlated ids for malformed and missing request-id headers', async () => {
+        const malformed = 'private.person@example.bg';
+        const malformedKey = '5a3e80db-8c62-49e3-aadc-bd434808ec38';
+        const missingKey = 'cd15540c-f70e-4ee4-8746-513b44bd30f7';
+        const uuidV4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+
+        const malformedResponse = await api.post('/store/nis2/assessments', assessmentBody, {
+          headers: headers(malformedKey, malformed),
+          ...acceptAnyStatus,
+        });
+        const missingResponse = await api.post('/store/nis2/assessments', assessmentBody, {
+          headers: headers(missingKey),
+          ...acceptAnyStatus,
+        });
+
+        for (const response of [malformedResponse, missingResponse]) {
+          expect(response.status).toBe(201);
+          expect(response.data.requestId).toMatch(uuidV4);
+          expect(response.headers['x-request-id']).toBe(response.data.requestId);
+          expect(JSON.stringify(response.data)).not.toContain(malformed);
+        }
+        expect(malformedResponse.data.requestId).not.toBe(malformed);
+        expect(missingResponse.data.requestId).not.toBe(malformedResponse.data.requestId);
+        const malformedIdempotency = await service().listNisIdempotencies({ idempotency_key: malformedKey });
+        const missingIdempotency = await service().listNisIdempotencies({ idempotency_key: missingKey });
+        expect(malformedIdempotency[0].response_body.requestId).toBe(malformedResponse.data.requestId);
+        expect(missingIdempotency[0].response_body.requestId).toBe(missingResponse.data.requestId);
       });
 
       it.each([
@@ -322,18 +388,23 @@ medusaIntegrationTestRunner({
 
       it('fails closed without a durable write when the shared limiter is unavailable', async () => {
         limiterMode = 'error';
+        const requestId = '10000000-0000-4000-8000-000000000024';
         const before = (await service().listNisLeads({})).length;
         const response = await api.post('/store/nis2/leads', leadBody, {
-          headers: headers('4449038b-abf4-4444-b411-f462a180043c'),
+          headers: headers('4449038b-abf4-4444-b411-f462a180043c', requestId),
           ...acceptAnyStatus,
         });
 
         expect(response.status).toBe(503);
         expect(response.headers['retry-after']).toBe('1');
-        expect(response.data.error).toEqual(expect.objectContaining({
-          code: 'PERSISTENCE_UNAVAILABLE',
-          retryable: true,
-        }));
+        expect(response.headers['x-request-id']).toBe(requestId);
+        expect(response.data).toEqual({
+          error: expect.objectContaining({
+            code: 'PERSISTENCE_UNAVAILABLE',
+            retryable: true,
+          }),
+          requestId,
+        });
         expect(JSON.stringify(response.data)).not.toContain(leadBody.email);
         expect((await service().listNisLeads({})).length).toBe(before);
       });

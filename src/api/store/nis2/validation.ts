@@ -310,7 +310,7 @@ export function parseLeadBody(
   honeypot(raw);
 
   if (raw.privacyConsent !== true) {
-    throw new ContractError('CONSENT_REQUIRED', 400, false);
+    throw new ContractError('CONSENT_REQUIRED', 400, false, 'privacyConsent');
   }
   if (typeof raw.privacyNoticeVersion !== 'string' || raw.privacyNoticeVersion !== PRIVACY_NOTICE_VERSION) {
     validation('privacyNoticeVersion');

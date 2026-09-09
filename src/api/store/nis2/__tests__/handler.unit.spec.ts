@@ -2,6 +2,8 @@ import { CONTRACT_VERSION } from '../contract';
 import { handleV1Request } from '../handler';
 
 const KEY = '5d9cac03-85c8-44a9-a218-b427a42de85e';
+const REQUEST_ID = '10000000-0000-4000-8000-000000000017';
+const REPLAY_REQUEST_ID = '10000000-0000-4000-8000-000000000018';
 const originalFetch = global.fetch;
 const answers = {
   organizationType: 'PRIVATE_ENTERPRISE',
@@ -31,6 +33,7 @@ function requestDouble(body: Record<string, unknown>, service: Record<string, je
       'content-type': 'application/json',
       'x-nis2-contract-version': CONTRACT_VERSION,
       'idempotency-key': KEY,
+      'x-request-id': REQUEST_ID,
     },
     scope: {
       resolve: jest.fn((name: string) => (name === 'logger' ? logger : service)),
@@ -62,15 +65,15 @@ describe('NIS2 v1 route durability adapter', () => {
     const committed = {
       assessment: { id: 'nis2asm_01JTEST', persistedAt: '2026-09-04T00:00:00.000Z', rulesVersion: 'BG-NIS2-2026-08-v1' },
       result: { rulesVersion: 'BG-NIS2-2026-08-v1' },
-      requestId: 'service-request',
+      requestId: REQUEST_ID,
       idempotency: { replayed: false },
     };
     const service = {
-      createAssessmentSubmission: jest.fn().mockResolvedValue({
+      createAssessmentSubmission: jest.fn().mockImplementation(async (input) => ({
         status: 201,
-        body: committed,
+        body: { ...committed, requestId: input.requestId },
         persistenceOutcome: 'committed',
-      }),
+      })),
     };
     const logger = { info: jest.fn() };
     const req = requestDouble({ answers, infrastructureNeeds: [], attribution: {} }, service, logger);
@@ -79,13 +82,18 @@ describe('NIS2 v1 route durability adapter', () => {
     await expect(handleV1Request('assessment', req, res)).resolves.toBe(true);
 
     expect(service.createAssessmentSubmission).toHaveBeenCalledTimes(1);
+    expect(service.createAssessmentSubmission).toHaveBeenCalledWith(
+      expect.objectContaining({ requestId: REQUEST_ID }),
+    );
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith(committed);
     expect(res.setHeader).toHaveBeenCalledWith('X-NIS2-Contract-Version', CONTRACT_VERSION);
+    expect(res.setHeader).toHaveBeenCalledWith('X-Request-ID', REQUEST_ID);
     expect(logger.info.mock.calls.map(([entry]) => JSON.parse(entry))).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           event: 'nis2_durable_write_completed',
+          request_id: REQUEST_ID,
           record_type: 'assessment',
           outcome: 'committed',
           replayed: false,
@@ -96,23 +104,26 @@ describe('NIS2 v1 route durability adapter', () => {
 
   it('marks a duplicate committed request as a 200 replay', async () => {
     const service = {
-      createConsultationSubmission: jest.fn().mockResolvedValue({
+      createConsultationSubmission: jest.fn().mockImplementation(async (input) => ({
         status: 200,
         body: {
           consultation: { id: 'nis2consult_01JTEST', leadId: 'nis2lead_01JTEST', persistedAt: '2026-09-04T00:00:00.000Z' },
-          requestId: 'retry',
+          requestId: input.requestId,
           idempotency: { replayed: true },
           delivery: { ops: 'queued', internalNotification: 'queued' },
         },
         persistenceOutcome: 'none',
-      }),
+      })),
     };
     const req = requestDouble({ leadId: 'nis2lead_01JTEST', attribution: {} }, service);
+    req.headers['x-request-id'] = REPLAY_REQUEST_ID;
     const res = responseDouble();
 
     await handleV1Request('consultation', req, res);
 
     expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json.mock.calls[0][0].requestId).toBe(REPLAY_REQUEST_ID);
+    expect(res.setHeader).toHaveBeenCalledWith('X-Request-ID', REPLAY_REQUEST_ID);
     expect(res.setHeader).toHaveBeenCalledWith('Idempotency-Replayed', 'true');
   });
 
@@ -226,6 +237,107 @@ describe('NIS2 v1 route durability adapter', () => {
       message: 'Моля, проверете отбелязаните полета.',
       retryable: false,
     });
+    expect(res.json.mock.calls[0][0].requestId).toBe(REQUEST_ID);
+    expect(res.setHeader).toHaveBeenCalledWith('X-Request-ID', REQUEST_ID);
+  });
+
+  it('correlates a mapped 503 response with the supplied request id', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      json: async () => ({ error: 'synthetic limiter outage' }),
+    });
+    const service = { createAssessmentSubmission: jest.fn() };
+    const res = responseDouble();
+
+    await handleV1Request(
+      'assessment',
+      requestDouble({ answers, infrastructureNeeds: [], attribution: {} }, service),
+      res,
+    );
+
+    expect(service.createAssessmentSubmission).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(503);
+    expect(res.json.mock.calls[0][0]).toEqual(expect.objectContaining({
+      error: expect.objectContaining({ code: 'PERSISTENCE_UNAVAILABLE', retryable: true }),
+      requestId: REQUEST_ID,
+    }));
+    expect(res.setHeader).toHaveBeenCalledWith('X-Request-ID', REQUEST_ID);
+  });
+
+  it('replaces a malformed request id instead of reflecting or logging it', async () => {
+    const malformed = 'person@example.bg\r\nX-Injected: private';
+    const service = {
+      createAssessmentSubmission: jest.fn().mockImplementation(async (input) => ({
+        status: 201,
+        body: {
+          assessment: { id: 'nis2asm_01JTEST' },
+          requestId: input.requestId,
+          idempotency: { replayed: false },
+        },
+      })),
+    };
+    const logger = { info: jest.fn() };
+    const req = requestDouble({ answers, infrastructureNeeds: [], attribution: {} }, service, logger);
+    req.headers['x-request-id'] = malformed;
+    const res = responseDouble();
+
+    await handleV1Request('assessment', req, res);
+
+    const bodyRequestId = res.json.mock.calls[0][0].requestId;
+    const responseRequestId = res.setHeader.mock.calls.find(([name]) => name === 'X-Request-ID')?.[1];
+    expect(bodyRequestId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+    expect(responseRequestId).toBe(bodyRequestId);
+    expect(service.createAssessmentSubmission).toHaveBeenCalledWith(
+      expect.objectContaining({ requestId: bodyRequestId }),
+    );
+    expect(JSON.stringify(res.json.mock.calls)).not.toContain(malformed);
+    expect(JSON.stringify(logger.info.mock.calls)).not.toContain(malformed);
+    expect(logger.info.mock.calls.map(([entry]) => JSON.parse(entry))).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event: 'nis2_http_request_completed',
+          request_id: bodyRequestId,
+          http_status: 201,
+        }),
+      ]),
+    );
+  });
+
+  it('returns the complete privacy acknowledgement error contract', async () => {
+    const service = { createLeadSubmission: jest.fn() };
+    const req = requestDouble({
+      assessmentId: null,
+      name: 'Private Person',
+      companyName: 'Private Company',
+      jobTitle: null,
+      email: 'person@example.bg',
+      phone: null,
+      preferredContact: 'EMAIL',
+      privacyConsent: false,
+      privacyNoticeVersion: 'nis2-privacy-2026-09-08-93ba2f3d8256',
+      marketingConsent: false,
+      marketingNoticeVersion: null,
+      wantsConsultation: false,
+      answers,
+      infrastructureNeeds: [],
+      attribution: {},
+    }, service);
+    const res = responseDouble();
+
+    await handleV1Request('lead', req, res);
+
+    expect(service.createLeadSubmission).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      error: {
+        code: 'CONSENT_REQUIRED',
+        message: 'Необходимо е да удостоверите, че сте се запознали с известието за поверителност и поисканото обработване.',
+        retryable: false,
+        field: 'privacyConsent',
+      },
+      requestId: REQUEST_ID,
+    });
+    expect(res.setHeader).toHaveBeenCalledWith('X-Request-ID', REQUEST_ID);
   });
 
   it('does not let an operational logger failure replace a durable success response', async () => {

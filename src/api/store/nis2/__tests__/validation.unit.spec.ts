@@ -137,7 +137,7 @@ describe('NIS2-CAMPAIGN-CONTRACT 1.0.0 request validation', () => {
   });
 
   it.each([
-    [{ ...leadBody, privacyConsent: false }, 'CONSENT_REQUIRED', undefined],
+    [{ ...leadBody, privacyConsent: false }, 'CONSENT_REQUIRED', 'privacyConsent'],
     [{ ...leadBody, privacyNoticeVersion: 'nis2-privacy-2026-09-04' }, 'VALIDATION_FAILED', 'privacyNoticeVersion'],
     [{ ...leadBody, privacyNoticeVersion: 'nis2-privacy-2026-09-08-5090901008de' }, 'VALIDATION_FAILED', 'privacyNoticeVersion'],
     [{ ...leadBody, privacyNoticeVersion: 'nis2-privacy-2026-09-08-93ba2f3d8256-changed' }, 'VALIDATION_FAILED', 'privacyNoticeVersion'],

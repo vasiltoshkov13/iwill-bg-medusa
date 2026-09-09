@@ -25,14 +25,17 @@ interface SafeLogger {
   info(message: string): void;
 }
 
+const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+
 export async function handleV1Request(
   endpoint: EndpointKind,
   req: MedusaRequest,
   res: MedusaResponse,
 ): Promise<boolean> {
   const startedAt = Date.now();
-  const requestId = randomUUID();
+  const requestId = requestIdFor(req.headers);
   res.setHeader('X-NIS2-Contract-Version', CONTRACT_VERSION);
+  res.setHeader('X-Request-ID', requestId);
 
   let status = 500;
   let errorCode: string | null = null;
@@ -131,6 +134,11 @@ export async function handleV1Request(
   }
 
   return true;
+}
+
+function requestIdFor(headers: MedusaRequest['headers']): string {
+  const supplied = headers['x-request-id'];
+  return typeof supplied === 'string' && UUID_V4.test(supplied) ? supplied : randomUUID();
 }
 
 function idempotencySecret(): string {

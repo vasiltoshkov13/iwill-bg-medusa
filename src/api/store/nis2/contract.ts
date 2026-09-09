@@ -29,7 +29,7 @@ const ERROR_MESSAGES: Record<PublicErrorCode, string> = {
   INVALID_IDEMPOTENCY_KEY: 'Невалиден ключ за безопасно повторение на заявката.',
   INVALID_JSON: 'Заявката не съдържа валиден JSON.',
   VALIDATION_FAILED: 'Моля, проверете отбелязаните полета.',
-  CONSENT_REQUIRED: 'Необходимо е съгласие за обработване на данните.',
+  CONSENT_REQUIRED: 'Необходимо е да удостоверите, че сте се запознали с известието за поверителност и поисканото обработване.',
   ASSESSMENT_NOT_FOUND: 'Оценката не е намерена.',
   LEAD_NOT_FOUND: 'Запитването не е намерено.',
   IDEMPOTENCY_KEY_REUSED: 'Заявката не може да бъде повторена с променени данни.',
