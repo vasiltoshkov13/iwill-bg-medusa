@@ -103,7 +103,23 @@ A first successful write commits the domain row and idempotency result in one da
 
 The persistence schema stores consent facts, canonical answer digests, reduced referrer origins, allowlisted campaign dimensions, and server-recomputed qualification metadata. Unknown-field errors expose only known container names, never attacker-controlled field names. Public errors and general operational events do not include request bodies, contact data, answer values, campaign dimensions, idempotency keys, session IDs, IP addresses, or provider details.
 
-This implementation queues protected outbox intents; it does not enable provider delivery for public v1 traffic. NIS2-05 must prove processing, provider idempotency, exponential retry with jitter, dead-letter alerting, reconciliation, shared throttling, and notification-path isolation before the first public v1 request.
+## Outbox delivery
+
+`src/jobs/nis2-outbox.ts` runs every minute and drains `nis2_outbox`. It claims a due intent by moving it to `processing` under a five-minute lease, loads the domain row, and dispatches by intent type:
+
+| Intent | Destination |
+|---|---|
+| `ops_lead`, `ops_consultation` | `IWILL_OPS_API_URL` (default `https://iwill-ops-backend-production.up.railway.app`) at `/api/enquiries` |
+| `visitor_summary` | the visitor's address, via the Resend API |
+| `internal_lead`, `internal_consultation` | `NIS2_INTERNAL_INBOX` (default `sales@iwill.bg`), via the Resend API |
+
+Provider idempotency is the intent id, sent as `Idempotency-Key` to both providers and additionally as `submissionKey` to Ops, so a redelivery cannot create a second CRM record or send a second email. Failures settle on the shared `backoffForAttempt` ladder to a maximum of eight attempts; a non-throttle 4xx is parked as `dead_letter` on the first attempt because it will never be accepted. Attempts emit `nis2_outbox_attempt_finished` and a park emits `nis2_outbox_dead_lettered`, carrying only the dimensions the campaign observability contract allows.
+
+`visitor_summary` renders the stored `result_snapshot` rather than re-evaluating, so the visitor receives exactly the assessment they saw, with the mandatory disclaimer. It is gated on `privacy_consent`: a record without the acknowledgement is parked, never sent on an assumption. The internal notices go to an IWILL inbox and are not gated that way, but they carry the visitor's address as `reply_to` only when it is deliverable.
+
+When `RESEND_API_KEY` is absent the job leaves the email intents unclaimed instead of failing them, so a deployment without the key keeps them `pending` at attempt 0 rather than dead-lettering a backlog of real leads. Adding the key later drains that backlog on the next run.
+
+Set `NIS2_OUTBOX_WORKER=false` to stop all delivery without a deploy. Delivery is on by default, because an intent that is never drained is a lead the CRM never sees.
 
 ## Migration and verification
 
