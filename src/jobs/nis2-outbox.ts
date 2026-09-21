@@ -1,16 +1,14 @@
 /**
- * Drains the IWILL Ops intents from `nis2_outbox`.
+ * Drains `nis2_outbox`.
  *
  * A lead's contact details are committed with its outbox intents in one
  * transaction, but until this job existed nothing moved an intent out of
- * `pending`: leads were stored and never reached the CRM. This worker closes
- * the `ops_lead` / `ops_consultation` half of NIS2-05; `visitor_summary` and
- * `internal_lead` are deliberately left pending rather than marked delivered,
- * so their absence stays visible.
+ * `pending`: leads were stored and never reached the CRM, and the summary email
+ * the form promises the visitor was never sent.
  *
- * Delivery is idempotent at the provider: the Ops enquiry carries the intent id
- * as both `Idempotency-Key` and `submissionKey`, so a retry cannot create a
- * second CRM record.
+ * Delivery is idempotent at each provider: the intent id travels as the
+ * `Idempotency-Key` (and as `submissionKey` for Ops), so a retry cannot create a
+ * second CRM record or send a second email.
  */
 
 import type { MedusaContainer } from '@medusajs/framework/types';
@@ -34,6 +32,14 @@ import {
   type OpsEnquiry,
   type OpsIntentType,
 } from '../modules/nis2/ops-delivery';
+import {
+  EMAIL_INTENT_TYPES,
+  RESEND_ENDPOINT,
+  buildEmailMessage,
+  emailConfigFromEnv,
+  type EmailIntentType,
+  type ResendMessage,
+} from '../modules/nis2/email-delivery';
 
 const BATCH_SIZE = 25;
 /** A claimed intent is retried by the next run if the process dies mid-flight. */
@@ -53,24 +59,30 @@ interface OutboxRow {
   attempt_count: number;
 }
 
-class OpsHttpError extends Error {
+class ProviderHttpError extends Error {
   constructor(readonly status: number) {
-    super(`ops responded ${status}`);
-    this.name = 'OpsHttpError';
+    super(`provider responded ${status}`);
+    this.name = 'ProviderHttpError';
   }
 }
 
-export default async function nis2OutboxOpsJob(container: MedusaContainer): Promise<void> {
+export default async function nis2OutboxJob(container: MedusaContainer): Promise<void> {
   // Kill switch: set to "false" to stop delivery without a code change.
-  if (process.env.NIS2_OUTBOX_OPS_WORKER === 'false') return;
+  if (process.env.NIS2_OUTBOX_WORKER === 'false') return;
 
   const service = container.resolve(NIS2_MODULE) as Nis2ModuleService;
   const logger = container.resolve('logger') as SafeLogger;
   const now = new Date();
 
+  // An unconfigured provider is not a delivery failure: leaving its intents
+  // unclaimed keeps them pending at attempt 0 instead of burning the retry
+  // ladder and dead-lettering a backlog of real leads over a missing key.
+  const deliverable: string[] = [...OPS_INTENT_TYPES];
+  if (process.env.RESEND_API_KEY) deliverable.push(...EMAIL_INTENT_TYPES);
+
   const due = (await service.listNisOutboxes(
     {
-      intent_type: [...OPS_INTENT_TYPES],
+      intent_type: deliverable,
       // `processing` rows reappear here only once their lease has expired.
       state: ['pending', 'processing'],
       next_attempt_at: { $lte: now },
@@ -109,8 +121,7 @@ async function deliverIntent(
 
   try {
     const { lead, consultation } = await loadDomain(service, row);
-    const enquiry = buildOpsEnquiry(row.id, row.intent_type as OpsIntentType, lead, consultation);
-    httpStatus = await postToOps(enquiry, row.request_id);
+    httpStatus = await dispatch(row, lead, consultation);
 
     await service.updateNisOutboxes({
       selector: { id: row.id },
@@ -128,10 +139,10 @@ async function deliverIntent(
       latency_ms: Date.now() - startedAt,
     });
   } catch (error) {
-    const errorClass: OutboxErrorClass = error instanceof OpsHttpError
+    const errorClass: OutboxErrorClass = error instanceof ProviderHttpError
       ? classifyHttpStatus(error.status)
       : classifyThrown(error);
-    if (error instanceof OpsHttpError) httpStatus = error.status;
+    if (error instanceof ProviderHttpError) httpStatus = error.status;
 
     const settlement = settlementFor(attempt, errorClass, new Date());
     await service.updateNisOutboxes({ selector: { id: row.id }, data: settlement });
@@ -160,12 +171,35 @@ async function deliverIntent(
   }
 }
 
+async function dispatch(
+  row: OutboxRow,
+  lead: LeadRow,
+  consultation?: ConsultationRow,
+): Promise<number> {
+  if ((OPS_INTENT_TYPES as readonly string[]).includes(row.intent_type)) {
+    const enquiry = buildOpsEnquiry(row.id, row.intent_type as OpsIntentType, lead, consultation);
+    return postToOps(enquiry, row.request_id);
+  }
+  if ((EMAIL_INTENT_TYPES as readonly string[]).includes(row.intent_type)) {
+    const message = buildEmailMessage(
+      row.intent_type as EmailIntentType,
+      lead,
+      emailConfigFromEnv(),
+      consultation,
+    );
+    return postToResend(message, row.id);
+  }
+  // Only intents this job claims reach here, so an unknown type is a code change
+  // that forgot its handler — park it rather than retry it forever.
+  throw new UndeliverableIntent('provider_4xx', `no handler for intent ${row.intent_type}`);
+}
+
 async function loadDomain(
   service: Nis2ModuleService,
   row: OutboxRow,
 ): Promise<{ lead: LeadRow; consultation?: ConsultationRow }> {
   try {
-    if (row.intent_type === 'ops_consultation') {
+    if (row.intent_type === 'ops_consultation' || row.intent_type === 'internal_consultation') {
       const consultation = (await service.retrieveNisConsultation(row.domain_id)) as unknown as ConsultationRow;
       const lead = (await service.retrieveNisLead(consultation.lead_id)) as unknown as LeadRow;
       return { lead, consultation };
@@ -189,23 +223,44 @@ function isNotFound(error: unknown): boolean {
 
 async function postToOps(enquiry: OpsEnquiry, requestId: string): Promise<number> {
   const baseUrl = (process.env.IWILL_OPS_API_URL || DEFAULT_OPS_URL).replace(/\/+$/, '');
-  const timeoutMs = Number(process.env.IWILL_OPS_TIMEOUT_MS) || DEFAULT_TIMEOUT_MS;
   const apiKey = process.env.IWILL_OPS_API_KEY;
 
-  const response = await fetch(`${baseUrl}${OPS_ENQUIRY_PATH}`, {
+  return send(`${baseUrl}${OPS_ENQUIRY_PATH}`, {
+    'Idempotency-Key': enquiry.submissionKey,
+    'X-Request-Id': requestId,
+    ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
+  }, enquiry);
+}
+
+async function postToResend(message: ResendMessage, intentId: string): Promise<number> {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    // Unreachable while the job filters unconfigured providers out of its query,
+    // but a claimed intent must never be sent unauthenticated.
+    throw new UndeliverableIntent('authentication', 'RESEND_API_KEY is not configured');
+  }
+
+  return send(RESEND_ENDPOINT, {
+    Authorization: `Bearer ${apiKey}`,
+    'Idempotency-Key': intentId,
+  }, message);
+}
+
+async function send(
+  url: string,
+  headers: Record<string, string>,
+  body: unknown,
+): Promise<number> {
+  const timeoutMs = Number(process.env.IWILL_OPS_TIMEOUT_MS) || DEFAULT_TIMEOUT_MS;
+  const response = await fetch(url, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Idempotency-Key': enquiry.submissionKey,
-      'X-Request-Id': requestId,
-      ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
-    },
-    body: JSON.stringify(enquiry),
+    headers: { 'Content-Type': 'application/json', ...headers },
+    body: JSON.stringify(body),
     cache: 'no-store',
     signal: AbortSignal.timeout(timeoutMs),
   });
 
-  if (!response.ok) throw new OpsHttpError(response.status);
+  if (!response.ok) throw new ProviderHttpError(response.status);
   return response.status;
 }
 
@@ -223,6 +278,6 @@ function log(logger: SafeLogger, event: Record<string, unknown>): void {
 }
 
 export const config = {
-  name: 'nis2-outbox-ops',
+  name: 'nis2-outbox',
   schedule: '* * * * *',
 };

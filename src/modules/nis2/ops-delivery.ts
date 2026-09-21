@@ -41,6 +41,7 @@ export interface LeadRow {
   email?: string | null;
   phone?: string | null;
   preferred_contact?: string | null;
+  privacy_consent?: boolean | null;
   wants_consultation?: boolean | null;
   qualification?: string | null;
   scope_result?: string | null;

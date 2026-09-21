@@ -105,13 +105,21 @@ The persistence schema stores consent facts, canonical answer digests, reduced r
 
 ## Outbox delivery
 
-`src/jobs/nis2-outbox-ops.ts` runs every minute and drains the IWILL Ops half of the outbox: `ops_lead` and `ops_consultation`. It claims a due intent by moving it to `processing` under a five-minute lease, loads the domain row, and posts the enquiry to `IWILL_OPS_API_URL` (default `https://iwill-ops-backend-production.up.railway.app`) at `/api/enquiries`.
+`src/jobs/nis2-outbox.ts` runs every minute and drains `nis2_outbox`. It claims a due intent by moving it to `processing` under a five-minute lease, loads the domain row, and dispatches by intent type:
 
-Provider idempotency is the intent id, sent as both `Idempotency-Key` and `submissionKey`, so a redelivery cannot create a second CRM record. Failures settle on the shared `backoffForAttempt` ladder to a maximum of eight attempts; a non-throttle 4xx is parked as `dead_letter` on the first attempt because it will never be accepted. Attempts emit `nis2_outbox_attempt_finished` and a park emits `nis2_outbox_dead_lettered`, carrying only the dimensions the campaign observability contract allows.
+| Intent | Destination |
+|---|---|
+| `ops_lead`, `ops_consultation` | `IWILL_OPS_API_URL` (default `https://iwill-ops-backend-production.up.railway.app`) at `/api/enquiries` |
+| `visitor_summary` | the visitor's address, via the Resend API |
+| `internal_lead`, `internal_consultation` | `NIS2_INTERNAL_INBOX` (default `sales@iwill.bg`), via the Resend API |
 
-Set `NIS2_OUTBOX_OPS_WORKER=false` to stop delivery without a deploy. Delivery is on by default, because an intent that is never drained is a lead the CRM never sees.
+Provider idempotency is the intent id, sent as `Idempotency-Key` to both providers and additionally as `submissionKey` to Ops, so a redelivery cannot create a second CRM record or send a second email. Failures settle on the shared `backoffForAttempt` ladder to a maximum of eight attempts; a non-throttle 4xx is parked as `dead_letter` on the first attempt because it will never be accepted. Attempts emit `nis2_outbox_attempt_finished` and a park emits `nis2_outbox_dead_lettered`, carrying only the dimensions the campaign observability contract allows.
 
-The remaining intents — `visitor_summary` and `internal_lead` — are still only queued. They are deliberately left `pending` rather than marked delivered, so a query against `nis2_outbox` keeps showing that they are undelivered. NIS2-05 is closed for the Ops path only; the visitor summary email and the internal notification still need processing, reconciliation and dead-letter alerting before they can be called done.
+`visitor_summary` renders the stored `result_snapshot` rather than re-evaluating, so the visitor receives exactly the assessment they saw, with the mandatory disclaimer. It is gated on `privacy_consent`: a record without the acknowledgement is parked, never sent on an assumption. The internal notices go to an IWILL inbox and are not gated that way, but they carry the visitor's address as `reply_to` only when it is deliverable.
+
+When `RESEND_API_KEY` is absent the job leaves the email intents unclaimed instead of failing them, so a deployment without the key keeps them `pending` at attempt 0 rather than dead-lettering a backlog of real leads. Adding the key later drains that backlog on the next run.
+
+Set `NIS2_OUTBOX_WORKER=false` to stop all delivery without a deploy. Delivery is on by default, because an intent that is never drained is a lead the CRM never sees.
 
 ## Migration and verification
 
