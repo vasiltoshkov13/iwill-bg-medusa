@@ -103,7 +103,15 @@ A first successful write commits the domain row and idempotency result in one da
 
 The persistence schema stores consent facts, canonical answer digests, reduced referrer origins, allowlisted campaign dimensions, and server-recomputed qualification metadata. Unknown-field errors expose only known container names, never attacker-controlled field names. Public errors and general operational events do not include request bodies, contact data, answer values, campaign dimensions, idempotency keys, session IDs, IP addresses, or provider details.
 
-This implementation queues protected outbox intents; it does not enable provider delivery for public v1 traffic. NIS2-05 must prove processing, provider idempotency, exponential retry with jitter, dead-letter alerting, reconciliation, shared throttling, and notification-path isolation before the first public v1 request.
+## Outbox delivery
+
+`src/jobs/nis2-outbox-ops.ts` runs every minute and drains the IWILL Ops half of the outbox: `ops_lead` and `ops_consultation`. It claims a due intent by moving it to `processing` under a five-minute lease, loads the domain row, and posts the enquiry to `IWILL_OPS_API_URL` (default `https://iwill-ops-backend-production.up.railway.app`) at `/api/enquiries`.
+
+Provider idempotency is the intent id, sent as both `Idempotency-Key` and `submissionKey`, so a redelivery cannot create a second CRM record. Failures settle on the shared `backoffForAttempt` ladder to a maximum of eight attempts; a non-throttle 4xx is parked as `dead_letter` on the first attempt because it will never be accepted. Attempts emit `nis2_outbox_attempt_finished` and a park emits `nis2_outbox_dead_lettered`, carrying only the dimensions the campaign observability contract allows.
+
+Set `NIS2_OUTBOX_OPS_WORKER=false` to stop delivery without a deploy. Delivery is on by default, because an intent that is never drained is a lead the CRM never sees.
+
+The remaining intents — `visitor_summary` and `internal_lead` — are still only queued. They are deliberately left `pending` rather than marked delivered, so a query against `nis2_outbox` keeps showing that they are undelivered. NIS2-05 is closed for the Ops path only; the visitor summary email and the internal notification still need processing, reconciliation and dead-letter alerting before they can be called done.
 
 ## Migration and verification
 
