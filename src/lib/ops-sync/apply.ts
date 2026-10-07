@@ -84,9 +84,6 @@ async function loadMedusaState(container: MedusaContainer): Promise<MedusaState>
       'id',
       'handle',
       'status',
-      'options.id',
-      'options.title',
-      'options.values.value',
       'variants.id',
       'variants.sku',
       'variants.title',
@@ -103,10 +100,6 @@ async function loadMedusaState(container: MedusaContainer): Promise<MedusaState>
   const state: MedusaState = { products: [], variants: [], byVariant: new Map(), optionByProduct: new Map() };
   for (const p of data as any[]) {
     state.products.push({ id: p.id, handle: p.handle, status: p.status });
-    const option = (p.options ?? []).find((o: any) => o.title === OPTION_TITLE);
-    if (option) {
-      state.optionByProduct.set(p.id, { id: option.id, values: (option.values ?? []).map((v: any) => v.value) });
-    }
     for (const v of p.variants ?? []) {
       const prices: PriceRow[] = (v.price_set?.prices ?? []).map((pr: any) => ({
         id: pr.id,
@@ -245,7 +238,17 @@ async function applyPlan(
     });
   }
 
-  if (plan.creates.length) await applyCreates(container, plan.creates, state, locationId, logger);
+  // Creating products and variants touches product options, which the 2.13.4
+  // code cannot read or write while the database carries the 2.20 option schema
+  // (product_product_option). Creates stay off until that is resolved; they are
+  // still planned and logged as ops_sync_create.
+  if (plan.creates.length) {
+    if (process.env.OPS_CATALOGUE_SYNC_CREATE === 'true') {
+      await applyCreates(container, plan.creates, state, locationId, logger);
+    } else {
+      logger.warn(`[ops-sync] ${plan.creates.length} variant(s) to create; set OPS_CATALOGUE_SYNC_CREATE=true to create them`);
+    }
+  }
 }
 
 async function applyCreates(
@@ -313,7 +316,21 @@ async function applyCreates(
   }
 
   // New configurations of products that already exist.
-  for (const c of creates.filter((c) => c.product_id)) {
+  const existingCreates = creates.filter((c) => c.product_id);
+  if (existingCreates.length) {
+    const { data: withOptions } = await query.graph({
+      entity: 'product',
+      fields: ['id', 'options.id', 'options.title', 'options.values.value'],
+      filters: { id: existingCreates.map((c) => c.product_id!) },
+    });
+    for (const p of withOptions as any[]) {
+      const option = (p.options ?? []).find((o: any) => o.title === OPTION_TITLE);
+      if (option) {
+        state.optionByProduct.set(p.id, { id: option.id, values: (option.values ?? []).map((v: any) => v.value) });
+      }
+    }
+  }
+  for (const c of existingCreates) {
     const option = state.optionByProduct.get(c.product_id!);
     if (!option) {
       logger.warn(`[ops-sync] ${c.sku}: product ${c.handle} has no ${OPTION_TITLE} option`);

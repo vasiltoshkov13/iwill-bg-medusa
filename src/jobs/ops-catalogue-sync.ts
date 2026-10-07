@@ -6,6 +6,9 @@
  * - unset or "dry-run": plan and log every change, write nothing
  * - "apply": write the plan to Medusa
  * - "off": do nothing
+ *
+ * Creating products and variants additionally needs OPS_CATALOGUE_SYNC_CREATE=true
+ * (see apply.ts for why it is off by default).
  */
 
 import type { MedusaContainer } from '@medusajs/framework/types';
