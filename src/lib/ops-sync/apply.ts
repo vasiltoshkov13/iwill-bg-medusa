@@ -58,6 +58,13 @@ interface MedusaState {
   optionByProduct: Map<string, { id: string; values: string[] }>;
 }
 
+/**
+ * Ops `current_selling_price` is the final customer price including 20% VAT;
+ * Medusa holds prices before VAT and the storefront adds it back for display.
+ */
+export const VAT_RATE = 0.2;
+export const netOfVat = (gross: number) => Math.round((gross / (1 + VAT_RATE)) * 100) / 100;
+
 export async function fetchOpsInventory(): Promise<OpsItem[]> {
   const baseUrl = (process.env.IWILL_OPS_API_URL || DEFAULT_OPS_URL).replace(/\/+$/, '');
   const timeoutMs = Number(process.env.IWILL_OPS_TIMEOUT_MS) || 15_000;
@@ -71,7 +78,10 @@ export async function fetchOpsInventory(): Promise<OpsItem[]> {
   return (body.items as Record<string, unknown>[]).map((row) => ({
     sku: String(row.sku ?? ''),
     name: String(row.name ?? ''),
-    price: Number(row.price) || 0,
+    // `current_selling_price` is the manually confirmed EUR price. The feed's
+    // `price` is the legacy selling_price and must not reach the store; a null
+    // (not yet confirmed) becomes 0, which the planner treats as not for sale.
+    price: row.current_selling_price == null ? 0 : netOfVat(Number(row.current_selling_price) || 0),
     quantity_bg: Number(row.quantity_bg) || 0,
   }));
 }

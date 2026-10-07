@@ -8,9 +8,10 @@
  * computed off-box against live data before anything is written.
  *
  * Rules (agreed with the store owner, 2026-10-07):
- * - Price: the Ops `selling_price` in EUR before VAT. The storefront adds VAT.
- * - Sellable = BG warehouse stock > 0 and an Ops price > 0. A zero-priced SKU is
- *   given stock 0 so it cannot be ordered at a stale Medusa price.
+ * - Price: the Ops `current_selling_price` (manually confirmed, EUR, VAT
+ *   included), stored in Medusa before VAT; never the legacy `selling_price`.
+ * - Sellable = BG warehouse stock > 0 and a confirmed price > 0. A SKU without
+ *   one is given stock 0 so it cannot be ordered at a stale Medusa price.
  * - A product with at least one variant SKU in Ops is "managed": it is published
  *   while any variant is sellable and set to draft otherwise. A managed product's
  *   variants that are missing from Ops get stock 0.
