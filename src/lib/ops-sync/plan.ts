@@ -23,7 +23,7 @@
  *   product cannot go on sale without real copy and photos.
  */
 
-import { CATALOGUE, modelForSku, type CatalogueEntry, type ProductCopy } from './catalogue';
+import { CATALOGUE, STORE_CONFIGS, modelForSku, storeConfigFor, type CatalogueEntry, type ProductCopy, type StoreConfig } from './catalogue';
 
 export interface OpsItem {
   sku: string;
@@ -39,7 +39,7 @@ export interface MedusaVariant {
   product_id: string;
   /** Current EUR amount, or null when the variant has no EUR price. */
   price: number | null;
-  /** Stocked quantity summed over locations, or null without an inventory item. */
+  /** Available quantity (stocked minus reserved by open orders), or null without an inventory item. */
   stock: number | null;
 }
 
@@ -51,6 +51,7 @@ export interface MedusaProduct {
 
 export interface PriceChange { variant_id: string; sku: string; from: number | null; to: number }
 export interface StockChange { variant_id: string; sku: string; from: number | null; to: number }
+export interface TitleChange { variant_id: string; sku: string; from: string; to: string }
 export interface StatusChange { product_id: string; handle: string; from: string; to: 'published' | 'draft' }
 export interface VariantCreate {
   sku: string;
@@ -70,6 +71,7 @@ export interface SyncPlan {
   prices: PriceChange[];
   stock: StockChange[];
   statuses: StatusChange[];
+  titles: TitleChange[];
   creates: VariantCreate[];
   skipped: Skip[];
   /** Handles left untouched because none of their SKUs exist in Ops. */
@@ -90,8 +92,9 @@ export function planSync(
   products: MedusaProduct[],
   variants: MedusaVariant[],
   catalogue: Record<string, CatalogueEntry> = CATALOGUE,
+  configs: Record<string, StoreConfig> = STORE_CONFIGS,
 ): SyncPlan {
-  const plan: SyncPlan = { prices: [], stock: [], statuses: [], creates: [], skipped: [], unmanaged: [] };
+  const plan: SyncPlan = { prices: [], stock: [], statuses: [], titles: [], creates: [], skipped: [], unmanaged: [] };
 
   const opsBySku = new Map<string, OpsItem>();
   for (const item of opsItems) {
@@ -133,7 +136,7 @@ export function planSync(
     }
     plan.creates.push({
       sku: item.sku,
-      title: variantTitleFromOpsName(item.name),
+      title: storeConfigFor(item.sku, configs)?.title ?? variantTitleFromOpsName(item.name),
       price: eur(item.price),
       stock: item.quantity_bg,
       handle: model.handle,
@@ -168,6 +171,10 @@ export function planSync(
           plan.prices.push({ variant_id: v.variant_id, sku: item.sku, from: v.price, to });
         }
       }
+      const title = item ? storeConfigFor(item.sku, configs)?.title : undefined;
+      if (title && v.title !== title) {
+        plan.titles.push({ variant_id: v.variant_id, sku: item!.sku, from: v.title, to: title });
+      }
       if (v.stock !== targetStock) {
         plan.stock.push({ variant_id: v.variant_id, sku: v.sku ?? v.variant_id, from: v.stock, to: targetStock });
       }
@@ -188,6 +195,7 @@ export function summarisePlan(plan: SyncPlan): Record<string, number> {
     price_changes: plan.prices.length,
     stock_changes: plan.stock.length,
     status_changes: plan.statuses.length,
+    title_changes: plan.titles.length,
     variants_created: plan.creates.length,
     products_created: new Set(plan.creates.filter((c) => c.product).map((c) => c.handle)).size,
     skipped: plan.skipped.length,

@@ -23,6 +23,7 @@ import {
   type SyncPlan,
   type VariantCreate,
 } from './plan';
+import { storeConfigFor } from './catalogue';
 
 export const DEFAULT_OPS_URL = 'https://iwill-ops-backend-production.up.railway.app';
 export const OPS_INVENTORY_PATH = '/api/public/inventory?warehouse=BG';
@@ -43,7 +44,7 @@ interface Logger {
 }
 
 interface PriceRow { id: string; amount: number; currency_code: string }
-interface LevelRow { location_id: string; stocked_quantity: number }
+interface LevelRow { location_id: string; stocked_quantity: number; reserved_quantity: number }
 interface VariantState {
   priceSetId: string | null;
   prices: PriceRow[];
@@ -81,7 +82,10 @@ export async function fetchOpsInventory(): Promise<OpsItem[]> {
     // `current_selling_price` is the manually confirmed EUR price. The feed's
     // `price` is the legacy selling_price and must not reach the store; a null
     // (not yet confirmed) becomes 0, which the planner treats as not for sale.
-    price: row.current_selling_price == null ? 0 : netOfVat(Number(row.current_selling_price) || 0),
+    price: storeConfigFor(String(row.sku ?? ''))?.grossPrice != null
+      // A configured unit has its own store price (see STORE_CONFIGS).
+      ? netOfVat(storeConfigFor(String(row.sku ?? ''))!.grossPrice!)
+      : row.current_selling_price == null ? 0 : netOfVat(Number(row.current_selling_price) || 0),
     quantity_bg: Number(row.quantity_bg) || 0,
   }));
 }
@@ -104,6 +108,7 @@ async function loadMedusaState(container: MedusaContainer): Promise<MedusaState>
       'variants.inventory_items.inventory_item_id',
       'variants.inventory_items.inventory.location_levels.location_id',
       'variants.inventory_items.inventory.location_levels.stocked_quantity',
+      'variants.inventory_items.inventory.location_levels.reserved_quantity',
     ],
   });
 
@@ -120,6 +125,7 @@ async function loadMedusaState(container: MedusaContainer): Promise<MedusaState>
       const levels: LevelRow[] = (link?.inventory?.location_levels ?? []).map((l: any) => ({
         location_id: l.location_id,
         stocked_quantity: Number(l.stocked_quantity) || 0,
+        reserved_quantity: Number(l.reserved_quantity) || 0,
       }));
       const eurPrice = prices.find((pr) => pr.currency_code === 'eur');
       state.variants.push({
@@ -128,7 +134,11 @@ async function loadMedusaState(container: MedusaContainer): Promise<MedusaState>
         title: v.title,
         product_id: p.id,
         price: eurPrice ? eurPrice.amount : null,
-        stock: link ? levels.reduce((sum, l) => sum + l.stocked_quantity, 0) : null,
+        // What a customer can still order. Ops quantity already excludes units
+        // that have left the warehouse, but Medusa keeps a reservation for an
+        // order until it is fulfilled, so comparing stocked quantity would count
+        // a sold unit twice once Ops ships it.
+        stock: link ? levels.reduce((sum, l) => sum + l.stocked_quantity - l.reserved_quantity, 0) : null,
       });
       state.byVariant.set(v.id, {
         priceSetId: v.price_set?.id ?? null,
@@ -168,6 +178,7 @@ export async function runOpsCatalogueSync(
   for (const p of plan.prices) log('ops_sync_price', { ...p });
   for (const s of plan.stock) log('ops_sync_stock', { ...s });
   for (const s of plan.statuses) log('ops_sync_status', { ...s });
+  for (const t of plan.titles) log('ops_sync_title', { ...t });
   for (const c of plan.creates) {
     log('ops_sync_create', { sku: c.sku, handle: c.handle, title: c.title, price: c.price, stock: c.stock, new_product: !c.product_id });
   }
@@ -193,7 +204,6 @@ async function applyPlan(
   logger: Logger,
 ): Promise<void> {
   const query = container.resolve(ContainerRegistrationKeys.QUERY);
-  const productSvc: any = container.resolve(Modules.PRODUCT);
   const pricingSvc: any = container.resolve(Modules.PRICING);
   const inventorySvc: any = container.resolve(Modules.INVENTORY);
 
@@ -229,10 +239,12 @@ async function applyPlan(
       logger.warn(`[ops-sync] ${change.sku}: no stock location`);
       continue;
     }
+    // Available = stocked - reserved, so open reservations are added back on top
+    // of the Ops quantity; a level elsewhere keeps only what it has reserved.
     const updates = v.levels.map((l) => ({
       inventory_item_id: v.inventoryItemId,
       location_id: l.location_id,
-      stocked_quantity: l.location_id === target ? change.to : 0,
+      stocked_quantity: (l.location_id === target ? change.to : 0) + l.reserved_quantity,
     }));
     if (updates.length) await inventorySvc.updateInventoryLevels(updates);
     if (!v.levels.some((l) => l.location_id === target)) {
@@ -242,10 +254,27 @@ async function applyPlan(
     }
   }
 
+  // Titles and publish status are written to their own columns directly: the
+  // product module's update paths load product options, which fail while the
+  // database carries the 2.20 option schema under 2.13.4 code. Each change is
+  // separate, so one failure does not hold back the others.
+  const pg: any = container.resolve(ContainerRegistrationKeys.PG_CONNECTION);
+  for (const change of plan.titles) {
+    try {
+      await pg('product_variant').where({ id: change.variant_id }).update({ title: change.to, updated_at: new Date() });
+    } catch (error) {
+      logger.warn(`[ops-sync] ${change.sku}: title not updated (${error instanceof Error ? error.message : String(error)})`);
+    }
+  }
   for (const change of plan.statuses) {
-    await productSvc.updateProducts(change.product_id, {
-      status: change.to === 'published' ? ProductStatus.PUBLISHED : ProductStatus.DRAFT,
-    });
+    try {
+      await pg('product').where({ id: change.product_id }).update({
+        status: change.to === 'published' ? ProductStatus.PUBLISHED : ProductStatus.DRAFT,
+        updated_at: new Date(),
+      });
+    } catch (error) {
+      logger.warn(`[ops-sync] ${change.handle}: status not updated (${error instanceof Error ? error.message : String(error)})`);
+    }
   }
 
   // Creating products and variants touches product options, which the 2.13.4

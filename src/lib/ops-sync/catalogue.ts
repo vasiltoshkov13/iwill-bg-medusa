@@ -105,3 +105,27 @@ export function modelForSku(
   }
   return best ? catalogue[best] : null;
 }
+
+/**
+ * How the online store sells a warehouse SKU, when that differs from the Ops
+ * record. `title` is the configuration shown to customers; `grossPrice` (EUR,
+ * VAT included) replaces the Ops price when the store ships a configured unit
+ * built from a barebone in stock. Stock always follows the Ops SKU.
+ */
+export interface StoreConfig {
+  title?: string;
+  grossPrice?: number;
+}
+
+export const STORE_CONFIGS: Record<string, StoreConfig> = {
+  // Stocked as a barebone; sold online fitted with 8GB DDR4 and a 256GB SSD
+  // (decided 2026-10-13). The datasheet lists no WiFi module.
+  'N1241-BAREBONE': { title: 'Intel N100 · 8GB DDR4 · 256GB M.2 SSD', grossPrice: 550 },
+};
+
+export function storeConfigFor(sku: string | null | undefined, configs: Record<string, StoreConfig> = STORE_CONFIGS): StoreConfig | undefined {
+  if (!sku) return undefined;
+  const upper = sku.trim().toUpperCase();
+  const key = Object.keys(configs).find((k) => k.toUpperCase() === upper);
+  return key ? configs[key] : undefined;
+}
