@@ -21,6 +21,7 @@ describe('fetchOpsInventory', () => {
         items: [
           { sku: 'N3322-X', name: 'N3322 x', price: 574.75, current_selling_price: 975, quantity_bg: 11 },
           { sku: 'N3022-X', name: 'N3022 x', price: 368.5, current_selling_price: null, quantity_bg: 3 },
+          { sku: 'N1241-BAREBONE', name: 'N1241 Barebone', price: 196.63, current_selling_price: 375, quantity_bg: 3 },
         ],
       }),
     }) as unknown as typeof fetch;
@@ -29,6 +30,8 @@ describe('fetchOpsInventory', () => {
     expect(items).toEqual([
       { sku: 'N3322-X', name: 'N3322 x', price: 812.5, quantity_bg: 11 },
       { sku: 'N3022-X', name: 'N3022 x', price: 0, quantity_bg: 3 },
+      // Sold configured (8GB + 256GB) at its own store price, 595 with VAT.
+      { sku: 'N1241-BAREBONE', name: 'N1241 Barebone', price: 495.83, quantity_bg: 3 },
     ]);
   });
 });

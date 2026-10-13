@@ -117,6 +117,37 @@ describe('planSync', () => {
   });
 });
 
+describe('store configurations', () => {
+  const configs = { 'N1241-BAREBONE': { title: 'Intel N100 · 8GB DDR4 · 256GB M.2 SSD', grossPrice: 595 } };
+
+  it('renames a variant to the configuration the store sells', () => {
+    const plan = planSync(
+      [ops('N1241-BAREBONE', 458.33, 3)],
+      [product('p1', 'n1241')],
+      [{ ...variant('v1', 'p1', 'N1241-BAREBONE', 458.33, 3), title: 'Intel N100 Barebone + WiFi AC7260' }],
+      undefined,
+      configs,
+    );
+    expect(plan.titles).toEqual([
+      { variant_id: 'v1', sku: 'N1241-BAREBONE', from: 'Intel N100 Barebone + WiFi AC7260', to: 'Intel N100 · 8GB DDR4 · 256GB M.2 SSD' },
+    ]);
+  });
+
+  it('leaves a title alone once it matches, and SKUs without a configuration', () => {
+    const plan = planSync(
+      [ops('N1241-BAREBONE', 458.33, 3), ops('N3322-X', 812.5, 11)],
+      [product('p1', 'n1241'), product('p2', 'n3322')],
+      [
+        { ...variant('v1', 'p1', 'N1241-BAREBONE', 458.33, 3), title: 'Intel N100 · 8GB DDR4 · 256GB M.2 SSD' },
+        variant('v2', 'p2', 'N3322-X', 812.5, 11),
+      ],
+      undefined,
+      configs,
+    );
+    expect(plan.titles).toEqual([]);
+  });
+});
+
 describe('catalogue', () => {
   it('prefers the longest model prefix', () => {
     expect(modelForSku('MC-74J-J6412-8GB-128GB', { 'MC-74': { handle: 'mc-74' }, 'MC-74J': { handle: 'mc-74j' } })?.handle).toBe('mc-74j');
@@ -137,7 +168,7 @@ describe('planLooksUnsafe', () => {
   });
   it('refuses a plan that drafts most of the store', () => {
     const products = [product('p1', 'a'), product('p2', 'b'), product('p3', 'c')];
-    const plan = { prices: [], stock: [], creates: [], skipped: [], unmanaged: [],
+    const plan = { prices: [], stock: [], titles: [], creates: [], skipped: [], unmanaged: [],
       statuses: products.slice(0, 2).map((p) => ({ product_id: p.id, handle: p.handle, from: 'published', to: 'draft' as const })) };
     expect(planLooksUnsafe(many, plan, products)).toMatch(/draft 2 of 3/);
   });
