@@ -24,4 +24,4 @@ RUN corepack enable
 
 EXPOSE 9000
 
-CMD ["sh", "-c", "npx medusa db:migrate && npm run start"]
+CMD ["sh", "-c", "npx medusa db:migrate --execute-safe-links < /dev/null && npm run start"]

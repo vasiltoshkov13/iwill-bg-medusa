@@ -2,7 +2,11 @@
 buildCommand = "npm run build"
 
 [deploy]
-startCommand = "sh -c 'export MEDUSA_DISABLE_TELEMETRY=true MEDUSA_WORKER_MODE=shared && node ./node_modules/@medusajs/cli/cli.js db:migrate && exec node ./node_modules/@medusajs/cli/cli.js start'"
+# db:migrate must never prompt: on 2026-09-10 the 2.20.1 deploy stopped at an
+# interactive "Select the tables to UPDATE" link-sync question, never became
+# healthy, and was rolled back with the 2.20 schema already applied.
+# --execute-safe-links creates new link tables and skips updates/deletes.
+startCommand = "sh -c 'export MEDUSA_DISABLE_TELEMETRY=true MEDUSA_WORKER_MODE=shared && node ./node_modules/@medusajs/cli/cli.js db:migrate --execute-safe-links < /dev/null && exec node ./node_modules/@medusajs/cli/cli.js start'"
 healthcheckPath = "/health"
 healthcheckTimeout = 600
 restartPolicyType = "ON_FAILURE"
