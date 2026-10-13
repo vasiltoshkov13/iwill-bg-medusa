@@ -118,7 +118,7 @@ describe('planSync', () => {
 });
 
 describe('store configurations', () => {
-  const configs = { 'N1241-BAREBONE': { title: 'Intel N100 · 8GB DDR4 · 256GB M.2 SSD', grossPrice: 550 } };
+  const configs = { 'N1241-BAREBONE': { title: 'Intel N100 · 8GB DDR4 · 256GB M.2 SSD', grossPrice: 595 } };
 
   it('renames a variant to the configuration the store sells', () => {
     const plan = planSync(

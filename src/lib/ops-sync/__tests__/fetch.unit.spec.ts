@@ -30,8 +30,8 @@ describe('fetchOpsInventory', () => {
     expect(items).toEqual([
       { sku: 'N3322-X', name: 'N3322 x', price: 812.5, quantity_bg: 11 },
       { sku: 'N3022-X', name: 'N3022 x', price: 0, quantity_bg: 3 },
-      // Sold configured (8GB + 256GB) at its own store price, 550 with VAT.
-      { sku: 'N1241-BAREBONE', name: 'N1241 Barebone', price: 458.33, quantity_bg: 3 },
+      // Sold configured (8GB + 256GB) at its own store price, 595 with VAT.
+      { sku: 'N1241-BAREBONE', name: 'N1241 Barebone', price: 495.83, quantity_bg: 3 },
     ]);
   });
 });

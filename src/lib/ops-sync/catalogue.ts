@@ -120,7 +120,9 @@ export interface StoreConfig {
 export const STORE_CONFIGS: Record<string, StoreConfig> = {
   // Stocked as a barebone; sold online fitted with 8GB DDR4 and a 256GB SSD
   // (decided 2026-10-13). The datasheet lists no WiFi module.
-  'N1241-BAREBONE': { title: 'Intel N100 · 8GB DDR4 · 256GB M.2 SSD', grossPrice: 550 },
+  'N1241-BAREBONE': { title: 'Intel N100 · 8GB DDR4 · 256GB M.2 SSD', grossPrice: 595 },
+  // N3322 ships with or without a fan; the units in the BG warehouse have one.
+  'N3322-I5-1235U-16GB-128GB': { title: 'Intel i5-1235U · 16GB DDR5 · 128GB NVMe SSD · с вентилатор' },
 };
 
 export function storeConfigFor(sku: string | null | undefined, configs: Record<string, StoreConfig> = STORE_CONFIGS): StoreConfig | undefined {
